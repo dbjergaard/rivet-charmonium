@@ -1,0 +1,49 @@
+diff -rupN boost_1_55_0/boost/concept/detail/general.hpp local/include/boost/concept/detail/general.hpp
+--- boost_1_55_0/boost/concept/detail/general.hpp	2010-06-08 15:31:13.000000000 -0400
++++ local/include/boost/concept/detail/general.hpp	2014-05-15 22:16:58.842338833 -0400
+@@ -64,11 +64,19 @@ struct requirement_<void(*)(Model)>
+ {};
+   
+ # endif
++// Version check from https://svn.boost.org/trac/boost/changeset/82886
++// (boost/static_assert.hpp)
++#if defined(__GNUC__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))) 
++#define BOOST_CONCEPT_UNUSED_TYPEDEF __attribute__((unused))
++#else
++#define BOOST_CONCEPT_UNUSED_TYPEDEF /**/
++#endif
+ 
+ #  define BOOST_CONCEPT_ASSERT_FN( ModelFnPtr )             \
+     typedef ::boost::concepts::detail::instantiate<          \
+     &::boost::concepts::requirement_<ModelFnPtr>::failed>    \
+-      BOOST_PP_CAT(boost_concept_check,__LINE__)
++      BOOST_PP_CAT(boost_concept_check,__LINE__)             \
++      BOOST_CONCEPT_UNUSED_TYPEDEF
+ 
+ }}
+ 
+diff -rupN boost_1_55_0/boost/tuple/detail/tuple_basic.hpp local/include/boost/tuple/detail/tuple_basic.hpp
+--- boost_1_55_0/boost/tuple/detail/tuple_basic.hpp	2011-01-02 15:25:11.000000000 -0500
++++ local/include/boost/tuple/detail/tuple_basic.hpp	2014-05-15 22:19:55.906337593 -0400
+@@ -214,6 +214,13 @@ get(cons<HT, TT>& c BOOST_APPEND_EXPLICI
+   typedef BOOST_DEDUCED_TYPENAME impl::type cons_element;
+   return const_cast<cons_element&>(impl::call(c)).head;
+ }
++// Version check from https://svn.boost.org/trac/boost/changeset/82886
++// (boost/static_assert.hpp)
++#if defined(__GNUC__) && ((__GNUC__ > 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ >= 7))) 
++#define BOOST_CONCEPT_UNUSED_TYPEDEF __attribute__((unused))
++#else
++#define BOOST_CONCEPT_UNUSED_TYPEDEF /**/
++#endif
+ 
+ // get function for const cons-lists, returns a const reference to
+ // the element. If the element is a reference, returns the reference
+@@ -225,7 +232,7 @@ inline typename access_traits<
+ get(const cons<HT, TT>& c BOOST_APPEND_EXPLICIT_TEMPLATE_NON_TYPE(int, N)) {
+   typedef BOOST_DEDUCED_TYPENAME detail::drop_front<N>::BOOST_NESTED_TEMPLATE
+       apply<cons<HT, TT> > impl;
+-  typedef BOOST_DEDUCED_TYPENAME impl::type cons_element;
++  typedef BOOST_DEDUCED_TYPENAME impl::type cons_element BOOST_CONCEPT_UNUSED_TYPEDEF;
+   return impl::call(c).head;
+ }
