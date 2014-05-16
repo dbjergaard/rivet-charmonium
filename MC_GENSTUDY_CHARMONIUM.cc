@@ -1,18 +1,32 @@
 // -*- C++ -*-
+
+//System 
+#include <map>
+#include <algorithm>
+
+// Rivet 
 #include "Rivet/Analysis.hh"
+#include "Rivet/AnalysisLoader.hh"
+//#include "Rivet/RivetAIDA.hh"
+
+//Projections
 #include "Rivet/Projections/FinalState.hh"
-#include "Rivet/Projections/ChargedFinalState.hh"
+#include "Rivet/Projections/ChargedLeptons.hh"
+#include "Rivet/Projections/FastJets.hh"
+
+typedef std::map<std::string,Rivet::Histo1DPtr> BookedHistos;
 
 namespace Rivet {
 
 
   /// Generic analysis looking at various distributions of final state particles
-  class MC_GENERIC : public Analysis {
+  class MC_GENSTUDY_CHARMONIUM : public Analysis {
   public:
 
     /// Constructor
-    MC_GENERIC()
-      : Analysis("MC_GENERIC")
+    MC_GENSTUDY_CHARMONIUM()
+      : Analysis("MC_GENSTUDY_CHARMONIUM"),
+	jetR(0.6)
     {    }
 
 
@@ -25,44 +39,24 @@ namespace Rivet {
     void init() {
 
       // Projections
-      const FinalState cnfs(-5.0, 5.0, 500*MeV);
-      addProjection(cnfs, "FS");
-      addProjection(ChargedFinalState(-5.0, 5.0, 500*MeV), "CFS");
+      const FinalState fs(-4.2, 4.2, .5*GeV);
+      addProjection(fs, "FS");
+      ChargedLeptons lfs(fs);
+      addProjection(lfs, "LFS");
+      FastJets JetProjection(fs,FastJets::ANTIKT, jetR);
+      addProjection(JetProjection,"Jets");
 
       // Histograms
-      // @todo Choose E/pT ranged based on input energies... can't do anything about kin. cuts, though
-      _histMult   = bookHisto1D("Mult", 100, -0.5, 199.5);
-      _histMultCh = bookHisto1D("MultCh", 100, -0.5, 199.5);
+      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 33, 300);
+      _histograms["JetM"] = bookHisto1D("JetM" , 25, 20, 300);
+      _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -2, 2);
+      
+      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 33, 300);
+      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 20, 300);
+      _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -2, 2);
 
-      _histPt   = bookHisto1D("Pt", 300, 0, 30);
-      _histPtCh = bookHisto1D("PtCh", 300, 0, 30);
-
-      _histE   = bookHisto1D("E", 100, 0, 200);
-      _histECh = bookHisto1D("ECh", 100, 0, 200);
-
-      _histEtaSumEt = bookProfile1D("EtaSumEt", 25, 0, 5);
-
-      _histEta    = bookHisto1D("Eta", 50, -5, 5);
-      _histEtaCh  = bookHisto1D("EtaCh", 50, -5, 5);
-      _tmphistEtaPlus = Histo1D(25, 0, 5);
-      _tmphistEtaMinus = Histo1D(25, 0, 5);
-      _tmphistEtaChPlus = Histo1D(25, 0, 5);
-      _tmphistEtaChMinus = Histo1D(25, 0, 5);
-
-      _histRapidity    = bookHisto1D("Rapidity", 50, -5, 5);
-      _histRapidityCh  = bookHisto1D("RapidityCh", 50, -5, 5);
-      _tmphistRapPlus = Histo1D(25, 0, 5);
-      _tmphistRapMinus = Histo1D(25, 0, 5);
-      _tmphistRapChPlus = Histo1D(25, 0, 5);
-      _tmphistRapChMinus = Histo1D(25, 0, 5);
-
-      _histPhi    = bookHisto1D("Phi", 50, 0, TWOPI);
-      _histPhiCh  = bookHisto1D("PhiCh", 50, 0, TWOPI);
-
-      _histEtaPMRatio = bookScatter2D("EtaPMRatio");
-      _histEtaChPMRatio = bookScatter2D("EtaChPMRatio");
-      _histRapidityPMRatio = bookScatter2D("RapidityPMRatio");
-      _histRapidityChPMRatio = bookScatter2D("RapidityChPMRatio");
+      // Substructure variables
+      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1);
     }
 
 
@@ -70,106 +64,76 @@ namespace Rivet {
     /// Perform the per-event analysis
     void analyze(const Event& event) {
       const double weight = event.weight();
-
-      // Charged + neutral final state
-      const FinalState& cnfs = applyProjection<FinalState>(event, "FS");
-      MSG_DEBUG("Total multiplicity = " << cnfs.size());
-      _histMult->fill(cnfs.size(), weight);
-      foreach (const Particle& p, cnfs.particles()) {
-        const double eta = p.eta();
-        _histEta->fill(eta, weight);
-        _histEtaSumEt->fill(fabs(eta), p.momentum().Et(), weight);
-        if (eta > 0) _tmphistEtaPlus.fill(fabs(eta), weight);
-        else _tmphistEtaMinus.fill(fabs(eta), weight);
-        //
-        const double rapidity = p.rapidity();
-        _histRapidity->fill(rapidity, weight);
-        if (rapidity > 0) _tmphistRapPlus.fill(fabs(rapidity), weight);
-        else _tmphistRapMinus.fill(fabs(rapidity), weight);
-        //
-        _histPt->fill(p.pT()/GeV, weight);
-        _histE->fill(p.momentum().E()/GeV, weight);
-        _histPhi->fill(p.momentum().phi(), weight);
+      const ChargedLeptons& lProj = applyProjection<ChargedLeptons>(event, "LFS");
+      if(lProj.chargedLeptons().empty()){
+	vetoEvent;
       }
-
-      const FinalState& cfs = applyProjection<FinalState>(event, "CFS");
-      MSG_DEBUG("Total charged multiplicity = " << cfs.size());
-      _histMultCh->fill(cfs.size(), weight);
-      foreach (const Particle& p, cfs.particles()) {
-        const double eta = p.eta();
-        _histEtaCh->fill(eta, weight);
-        if (eta > 0) {
-          _tmphistEtaChPlus.fill(fabs(eta), weight);
-        } else {
-          _tmphistEtaChMinus.fill(fabs(eta), weight);
-        }
-        const double rapidity = p.rapidity();
-        _histRapidityCh->fill(rapidity, weight);
-        if (rapidity > 0) {
-          _tmphistRapChPlus.fill(fabs(rapidity), weight);
-        } else {
-          _tmphistRapChMinus.fill(fabs(rapidity), weight);
-        }
-        _histPtCh->fill(p.pT()/GeV, weight);
-        _histECh->fill(p.momentum().E()/GeV, weight);
-        _histPhiCh->fill(p.momentum().phi(), weight);
+      Particles muons;
+      foreach(const Particle& lepton,lProj.chargedLeptons()){
+	if(lepton.abspid()==13){
+	  muons.push_back(lepton);
+	}
       }
+      //probably want to revisit this and take the two leading muons?
+      if(muons.size() != 2){
+	vetoEvent;
+      }
+      const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
+      const Jets jets = jetProj.jetsByPt();
+      if(jets.empty()){
+	vetoEvent;
+      }
+      //Process the particles
+
+      FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
+      //fill j_psi histos
+      _histograms["JPsiEta"]->fill(j_psi.pt(),weight);
+
+      Jet charmJet;
+      foreach(const Jet& j, jets){
+	if(deltaR(j.momentum(), j_psi) < jetR) {
+	  charmJet=j;
+	}
+      }
+      //fill charmjet histos
+      _histograms["JetPt"]->fill(charmJet.momentum().pt(),weight);
+      _histograms["JetM"]->fill(charmJet.momentum().mass(),weight);
+      _histograms["JetEta"]->fill(charmJet.momentum().eta(),weight);
+      //calculate substructure variables
+      const double z=j_psi.pt()/charmJet.momentum().pt();
+      
+      //fill substructure histos
+      _histograms["JetZ"]->fill(z,weight);
 
     }
+
+    
+    
 
 
     /// Finalize
     void finalize() {
-      normalize(_histMult);
-      normalize(_histMultCh);
-      normalize(_histEta);
-      normalize(_histEtaCh);
-      normalize(_histRapidity);
-      normalize(_histRapidityCh);
-      normalize(_histPt);
-      normalize(_histPtCh);
-      normalize(_histE);
-      normalize(_histECh);
-      normalize(_histPhi);
-      normalize(_histPhiCh);
-      divide(_tmphistEtaPlus, _tmphistEtaMinus, _histEtaPMRatio);
-      divide(_tmphistEtaChPlus, _tmphistEtaChMinus, _histEtaChPMRatio);
-      divide(_tmphistRapPlus, _tmphistRapMinus, _histRapidityPMRatio);
-      divide(_tmphistRapChPlus, _tmphistRapChMinus, _histRapidityChPMRatio);
+
     }
 
     //@}
 
 
   private:
-
+    double jetR;
     /// @name Histograms
     //@{
-    Histo1DPtr _histMult, _histMultCh;
-    Profile1DPtr _histEtaSumEt;
-    Histo1DPtr _histEta, _histEtaCh;
-    Histo1DPtr _histRapidity, _histRapidityCh;
-    Histo1DPtr _histPt, _histPtCh;
-    Histo1DPtr _histE, _histECh;
-    Histo1DPtr _histPhi, _histPhiCh;
-    Scatter2DPtr _histEtaPMRatio;
-    Scatter2DPtr _histEtaChPMRatio;
-    Scatter2DPtr _histRapidityPMRatio;
-    Scatter2DPtr _histRapidityChPMRatio;
+    BookedHistos _histograms;
     //@}
 
     /// @name Temporary histos used to calculate eta+/eta- ratio plots
     //@{
-    Histo1D _tmphistEtaPlus, _tmphistEtaMinus;
-    Histo1D _tmphistEtaChPlus, _tmphistEtaChMinus;
-    Histo1D _tmphistRapPlus, _tmphistRapMinus;
-    Histo1D _tmphistRapChPlus, _tmphistRapChMinus;
     //@}
 
   };
 
 
   // The hook for the plugin system
-  DECLARE_RIVET_PLUGIN(MC_GENERIC);
+  DECLARE_RIVET_PLUGIN(MC_GENSTUDY_CHARMONIUM);
 
 }
