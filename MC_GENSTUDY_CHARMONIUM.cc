@@ -51,9 +51,9 @@ namespace Rivet {
       _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 20);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
       
-      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
-      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 0, 10);
-      _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
+      // _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
+      // _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 0, 10);
+      // _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
       // Substructure variables
       _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1);
@@ -66,9 +66,9 @@ namespace Rivet {
       cutFlow["Nominal"]++;
       const double weight = event.weight();
       const ChargedLeptons& lProj = applyProjection<ChargedLeptons>(event, "LFS");
-      if(lProj.chargedLeptons().empty()){
-	vetoEvent;
-      }
+      // if(lProj.chargedLeptons().empty()){
+      // 	vetoEvent;
+      // }
       cutFlow["Leptons"]++;
       Particles muons;
       foreach(const Particle& lepton,lProj.chargedLeptons()){
@@ -77,9 +77,9 @@ namespace Rivet {
 	}
       }
       //probably want to revisit this and take the two leading muons?
-      if(muons.size() < 2){
-	vetoEvent;
-      }
+      // if(muons.size() < 2){
+      // 	vetoEvent;
+      // }
       cutFlow["2Muons"]++;
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
       const Jets jets = jetProj.jetsByPt();
@@ -89,15 +89,20 @@ namespace Rivet {
       cutFlow["Jets"]++;
       //Process the particles
 
-      FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
-      //fill j_psi histos
-      _histograms["JPsiEta"]->fill(j_psi.pt(),weight);
+      // FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
+      // //fill j_psi histos
+      // _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
+      // _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
+      // _histograms["JPsiMass"]->fill(j_psi.mass(),weight);
 
       Jet charmJet;
       foreach(const Jet& j, jets){
-      	if( j.mass() > 0 && deltaR(j.momentum(), j_psi) < jetR) {
-      	  charmJet=j;
-      	}
+      	// if( j.mass() > 0 && deltaR(j.momentum(), j_psi) < jetR) {
+      	//   charmJet=j;
+      	// }
+	if(j.containsCharm() && j.pt() > charmJet.pt()){
+	  charmJet=j;
+	}
       }
       if(charmJet.mass()==0.){
 	vetoEvent;
@@ -110,7 +115,8 @@ namespace Rivet {
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
 
       //calculate substructure variables
-      const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
+      const double z(0.);
+      //const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
