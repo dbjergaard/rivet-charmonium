@@ -15,7 +15,9 @@
 #include "Rivet/Projections/FastJets.hh"
 
 typedef std::map<std::string,Rivet::Histo1DPtr> BookedHistos;
-
+template <typename lvec> static void dump4vec(lvec four_mom){
+  std::cout<<"( "<<four_mom.pt()<<" [GeV], "<<four_mom.eta()<<", "<<four_mom.phi()<<", "<<four_mom.mass()<<" [GeV])"<<std::endl;
+}
 namespace Rivet {
 
 
@@ -50,7 +52,8 @@ namespace Rivet {
       _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 20);
       _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 20);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
-      
+      _histograms["JetMult"] = bookHisto1D("JetMult",10,-0.5,10.5);
+
       _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
       _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 0, 10);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
@@ -76,9 +79,8 @@ namespace Rivet {
 	  muons.push_back(lepton);
 	}
       }
-      //probably want to revisit this and take the two leading muons?
       if(muons.size() < 2){
-	vetoEvent;
+      	vetoEvent;
       }
       cutFlow["2Muons"]++;
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
@@ -86,12 +88,17 @@ namespace Rivet {
       if(jets.empty()){
       	vetoEvent;
       }
+
+      _histograms["JetMult"]->fill(jets.size(),weight);
       cutFlow["Jets"]++;
       //Process the particles
 
       FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
+      //dump4vec(j_psi);
       //fill j_psi histos
-      _histograms["JPsiEta"]->fill(j_psi.pt(),weight);
+      _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
+      _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
+      _histograms["JPsiM"]->fill(j_psi.mass(),weight);
 
       Jet charmJet;
       foreach(const Jet& j, jets){
@@ -104,10 +111,10 @@ namespace Rivet {
       }
       cutFlow["charmJetMass"]++;
       //fill charmjet histos
-
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
       _histograms["JetM"]->fill(charmJet.mass(),weight);
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
+
 
       //calculate substructure variables
       const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
