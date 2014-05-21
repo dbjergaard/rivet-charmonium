@@ -26,7 +26,8 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_CHARMONIUM()
       : Analysis("MC_GENSTUDY_CHARMONIUM"),
-	jetR(0.6)
+	jetR(0.6),
+	npassed(0)
     {    }
 
 
@@ -81,7 +82,7 @@ namespace Rivet {
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
       const Jets jets = jetProj.jetsByPt();
       if(jets.empty()){
-	vetoEvent;
+      	vetoEvent;
       }
       //Process the particles
 
@@ -91,20 +92,26 @@ namespace Rivet {
 
       Jet charmJet;
       foreach(const Jet& j, jets){
-	if(deltaR(j.momentum(), j_psi) < jetR) {
-	  charmJet=j;
-	}
+      	if( j.mass() > 0 && deltaR(j.momentum(), j_psi) < jetR) {
+      	  charmJet=j;
+      	}
+      }
+      if(charmJet.mass()==0.){
+	vetoEvent;
       }
       //fill charmjet histos
-      _histograms["JetPt"]->fill(charmJet.momentum().pt(),weight);
-      _histograms["JetM"]->fill(charmJet.momentum().mass(),weight);
-      _histograms["JetEta"]->fill(charmJet.momentum().eta(),weight);
+      //cout<<"charmJet: ("<<charmJet.pt()<<","<<charmJet.eta()<<","<<charmJet.phi()<<","<<charmJet.mass()<<")"<<endl;
+
+      _histograms["JetPt"]->fill(charmJet.pt(),weight);
+      _histograms["JetM"]->fill(charmJet.mass(),weight);
+      _histograms["JetEta"]->fill(charmJet.eta(),weight);
+
       //calculate substructure variables
-      const double z=j_psi.pt()/charmJet.momentum().pt();
+      const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
-
+      npassed++;
     }
 
     
@@ -113,7 +120,7 @@ namespace Rivet {
 
     /// Finalize
     void finalize() {
-
+      cout << npassed << " events passed selection!"<<endl;
     }
 
     //@}
@@ -121,15 +128,13 @@ namespace Rivet {
 
   private:
     double jetR;
+    size_t npassed;
     /// @name Histograms
     //@{
     BookedHistos _histograms;
     //@}
 
-    /// @name Temporary histos used to calculate eta+/eta- ratio plots
-    //@{
-    //@}
-
+    
   };
 
 

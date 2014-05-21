@@ -9,5 +9,7 @@ Stat:showPartonLevel = on ! additional statistics on MPI
 Beams:eCM = 8000.
 Random:setSeed = on
 Charmonium:all = on
+443:onMode = off
+443:2:onMode = on
 
 Tune:pp = 5 ! use Tune 4C
