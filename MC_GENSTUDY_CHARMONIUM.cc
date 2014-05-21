@@ -26,8 +26,7 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_CHARMONIUM()
       : Analysis("MC_GENSTUDY_CHARMONIUM"),
-	jetR(0.6),
-	npassed(0)
+	jetR(0.6)
     {    }
 
 
@@ -48,13 +47,13 @@ namespace Rivet {
       addProjection(JetProjection,"Jets");
 
       // Histograms
-      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 33, 300);
-      _histograms["JetM"] = bookHisto1D("JetM" , 25, 20, 300);
-      _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -2, 2);
+      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 20);
+      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 20);
+      _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
       
-      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 33, 300);
-      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 20, 300);
-      _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -2, 2);
+      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
+      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 0, 10);
+      _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
       // Substructure variables
       _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1);
@@ -64,11 +63,13 @@ namespace Rivet {
 
     /// Perform the per-event analysis
     void analyze(const Event& event) {
+      cutFlow["Nominal"]++;
       const double weight = event.weight();
       const ChargedLeptons& lProj = applyProjection<ChargedLeptons>(event, "LFS");
       if(lProj.chargedLeptons().empty()){
 	vetoEvent;
       }
+      cutFlow["Leptons"]++;
       Particles muons;
       foreach(const Particle& lepton,lProj.chargedLeptons()){
 	if(lepton.abspid()==13){
@@ -76,14 +77,16 @@ namespace Rivet {
 	}
       }
       //probably want to revisit this and take the two leading muons?
-      if(muons.size() != 2){
+      if(muons.size() < 2){
 	vetoEvent;
       }
+      cutFlow["2Muons"]++;
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
       const Jets jets = jetProj.jetsByPt();
       if(jets.empty()){
       	vetoEvent;
       }
+      cutFlow["Jets"]++;
       //Process the particles
 
       FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
@@ -99,8 +102,8 @@ namespace Rivet {
       if(charmJet.mass()==0.){
 	vetoEvent;
       }
+      cutFlow["charmJetMass"]++;
       //fill charmjet histos
-      //cout<<"charmJet: ("<<charmJet.pt()<<","<<charmJet.eta()<<","<<charmJet.phi()<<","<<charmJet.mass()<<")"<<endl;
 
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
       _histograms["JetM"]->fill(charmJet.mass(),weight);
@@ -111,7 +114,7 @@ namespace Rivet {
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
-      npassed++;
+
     }
 
     
@@ -120,7 +123,12 @@ namespace Rivet {
 
     /// Finalize
     void finalize() {
-      cout << npassed << " events passed selection!"<<endl;
+      cout<<"Cut flow"<<endl;
+      cout<<"|-"<<endl;
+      for(std::map<std::string, size_t>::const_iterator cut=cutFlow.begin(); cut != cutFlow.end(); ++cut){
+	cout<<"| "<<cut->first<<" | "<<cut->second <<" |"<<endl;
+      }
+      cout<<"|-"<<endl;
     }
 
     //@}
@@ -128,12 +136,11 @@ namespace Rivet {
 
   private:
     double jetR;
-    size_t npassed;
     /// @name Histograms
     //@{
     BookedHistos _histograms;
     //@}
-
+    std::map<std::string, size_t> cutFlow;
     
   };
 
