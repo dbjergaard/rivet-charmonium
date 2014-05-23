@@ -75,12 +75,15 @@ namespace Rivet {
       cutFlow["Leptons"]++;
       Particles muons;
       foreach(const Particle& lepton,lProj.chargedLeptons()){
-	if(lepton.abspid()==13){
+	if(abs(lepton.pid())==13){
 	  muons.push_back(lepton);
 	}
       }
-      if(muons.size() < 2){
+      if(muons.size() != 2){
       	vetoEvent;
+      }
+      if( muons[0].pid()*muons[1].pid() > 0 ){
+	vetoEvent;
       }
       cutFlow["2Muons"]++;
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
@@ -121,12 +124,7 @@ namespace Rivet {
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
-
     }
-
-    
-    
-
 
     /// Finalize
     void finalize() {
