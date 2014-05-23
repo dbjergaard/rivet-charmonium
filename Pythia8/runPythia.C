@@ -5,12 +5,21 @@
 #include "HepMC/IO_GenEvent.h"
 
 #include <cstdio>
+#include <cstring>
 
 using namespace Pythia8; 
 
 int main(int argc, char* argv[]) 
 {
-  if(argc !=5)
+  char tune[25];
+  char seed[25];
+
+  //tune = "5";
+  //seed = "1370";
+  strncpy(tune,"5",25);
+  strncpy(seed,"1370",25);
+
+  if(argc < 2)
     {
       cerr<<"Usage: "<<argv[0]<<" [config file] [out file] [seed] [tune]"<<endl;
       return 1;
@@ -21,49 +30,75 @@ int main(int argc, char* argv[])
          << " Program stopped! " << endl;
     return 1;
   }
+
   cout<<"Configuring PYTHIA from "<<argv[1]<<endl;
   cout<<"Writing output to "<<argv[2]<<endl;
-  cout <<"Using Seed" << argv[3] <<endl;
-  cout <<"Using Tune "<< argv[4] <<endl;
+
+  if(argc > 4){
+    strncpy(seed,argv[3],25);
+  }
+  if(argc > 5){
+    strncpy(tune,argv[4],25);
+  }
+  cout <<"Using Seed " << tune <<endl;
+  cout <<"Using Tune "<< seed <<endl;
   cout <<"Warning, command line arguments aren't type-checked, don't be stupid." <<endl;
   HepMC::Pythia8ToHepMC ToHepMC;
   HepMC::IO_GenEvent ascii_io(argv[2], std::ios::out);
   char processline[128];
   Pythia pythia;
   pythia.readFile(argv[1]);
-  int    nEvent    = 100;
-  nEvent = pythia.mode("Main:numberOfEvents");
+  int    nRequested    = 100;
+  nRequested = pythia.mode("Main:numberOfEvents");
   int    nAbort    = pythia.mode("Main:timesAllowErrors");
   // Set the seed
   pythia.readString("Random:setSeed = on");
-  sprintf(processline,"Random:seed = %s",argv[3]);
+  sprintf(processline,"Random:seed = %s",seed);
   pythia.readString(processline);
   // Set the tune
-  sprintf(processline,"Tune:pp = %s",argv[4]);
+  sprintf(processline,"Tune:pp = %s",tune);
   pythia.readString(processline);
 
   pythia.init();
   
   int iAbort = 0;
-  for(int iEvent =0; iEvent < nEvent; ++iEvent)
-    {
-      if (!pythia.next()) 
-	{
-	  if (pythia.info.atEndOfFile()) 
-	    {
-	      cout << " Aborted since reached end of Les Houches Event File\n"; 
-	      break; 
-	    }
+  int nGenerated=0;
+  std::vector<int> requestedPdgId;//(3,0);
+  while(nGenerated < nRequested) {
+    requestedPdgId.clear();
+    if (!pythia.next()) {
+      if (pythia.info.atEndOfFile()) {
+	cout << " Aborted since reached end of Les Houches Event File\n"; 
+	break; 
+      }
 	  
-	  if (++iAbort < nAbort) continue;
-	  cout << " Event generation aborted prematurely, owing to error!\n"; 
-	  break;
-	}
-      HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
-      ToHepMC.fill_next_event( pythia, hepmcevt );
-      ascii_io << hepmcevt;
-      delete hepmcevt;
+      if (++iAbort < nAbort) continue;
+      cout << " Event generation aborted prematurely, owing to error!\n"; 
+      break;
     }
+    for(int i=0; i < pythia.event.size(); i++){
+	if(abs(pythia.event[i].id())==443 || abs(pythia.event[i].id())==13){
+	  requestedPdgId.push_back(pythia.event[i].id());
+	}
+    }
+    if(requestedPdgId.size()!=3){
+      continue;
+    }
+    if(!(requestedPdgId[0]==443 && requestedPdgId[1]==13 && requestedPdgId[2]==-13)){
+      continue;
+    }
+    // for(std::vector<int>::const_iterator pid=requestedPdgId.begin();
+    // 	pid != requestedPdgId.end(); ++pid){
+    //   string delim((pid != requestedPdgId.end()-1) ? ", " : "\n");
+    //   cout<<*pid <<delim;
+    // }
+
+    HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
+    ToHepMC.fill_next_event( pythia, hepmcevt );
+    ascii_io << hepmcevt;
+    delete hepmcevt;
+    nGenerated++;
+  }
 
   pythia.stat();
   return 0;
