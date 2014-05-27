@@ -3,6 +3,7 @@
 //System 
 #include <map>
 #include <algorithm>
+#include <cmath>
 
 // Rivet 
 #include "Rivet/Analysis.hh"
@@ -28,7 +29,7 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_CHARMONIUM()
       : Analysis("MC_GENSTUDY_CHARMONIUM"),
-	jetR(0.6)
+	jetR(0.4)
     {    }
 
 
@@ -50,16 +51,17 @@ namespace Rivet {
 
       // Histograms
       _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 20);
-      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 20);
+      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 11);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
-      _histograms["JetMult"] = bookHisto1D("JetMult",10,-0.5,10.5);
+      _histograms["JetMult"] = bookHisto1D("JetMult",40,-0.5,40.5);
 
       _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
-      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 25, 0, 10);
+      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 3.05, 3.15);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
       // Substructure variables
-      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1);
+      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
+      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.05);
     }
 
 
@@ -73,54 +75,78 @@ namespace Rivet {
 	vetoEvent;
       }
       cutFlow["Leptons"]++;
+
       Particles muons;
       foreach(const Particle& lepton,lProj.chargedLeptons()){
 	if(abs(lepton.pid())==13){
 	  muons.push_back(lepton);
 	}
       }
-      if(muons.size() != 2){
-      	vetoEvent;
-      }
-      if( muons[0].pid()*muons[1].pid() > 0 ){
+      if(muons.size() < 2){
 	vetoEvent;
       }
       cutFlow["2Muons"]++;
-      const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
-      const Jets jets = jetProj.jetsByPt();
-      if(jets.empty()){
-      	vetoEvent;
-      }
 
-      _histograms["JetMult"]->fill(jets.size(),weight);
+      FourMomentum j_psi;
+      FourMomentum cand;
+      double deltaM=10000.;
+      const double j_psi_m = 3.096916;
+      foreach(const Particle& mu1, muons){
+	foreach(const Particle& mu2, muons){
+	  cand=mu1.momentum()+mu2.momentum();
+	  if(mu1.pid()*mu2.pid() < 0 && cand.mass()-j_psi_m < deltaM ){
+	    j_psi=cand;
+	    deltaM=cand.mass()-j_psi_m;
+	  }
+	}
+      }
+      if(j_psi.mass()==0) {
+	vetoEvent;
+      }
+      // dump4vec(j_psi);
+      const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
+      const Jets jets = jetProj.jetsByPt(1*GeV);
+      if(jets.empty()){
+	vetoEvent;
+      }
       cutFlow["Jets"]++;
+      _histograms["JetMult"]->fill(jets.size(),weight);
+
       //Process the particles
 
-      FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
-      //dump4vec(j_psi);
+      //FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
+
       //fill j_psi histos
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
       _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
       _histograms["JPsiM"]->fill(j_psi.mass(),weight);
 
       Jet charmJet;
+      double delR(99.);
+      double candDelR(99.);
       foreach(const Jet& j, jets){
-      	if( j.mass() > 0 && deltaR(j.momentum(), j_psi) < jetR) {
+	delR=deltaR(j.momentum(), j_psi);
+      	if( delR < jetR && delR < candDelR) {
       	  charmJet=j;
+	  candDelR=delR;
       	}
       }
-      if(charmJet.mass()==0.){
+      if(isinf(deltaR(charmJet,j_psi))){
 	vetoEvent;
       }
-      cutFlow["charmJetMass"]++;
-      //fill charmjet histos
+      cutFlow["charmJetMatch"]++;
+      if(isinf(deltaR(charmJet,j_psi))) {
+      	vetoEvent;
+      }
+
+      _histograms["DeltaR"]->fill(deltaR(j_psi,charmJet),weight);
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
       _histograms["JetM"]->fill(charmJet.mass(),weight);
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
 
 
       //calculate substructure variables
-      const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
+      const double z(charmJet.pt()+j_psi.pt() > 0 ? j_psi.pt()/(charmJet.pt() + j_psi.pt()) : -1.);
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
@@ -130,8 +156,9 @@ namespace Rivet {
     void finalize() {
       cout<<"Cut flow"<<endl;
       cout<<"|-"<<endl;
-      for(std::map<std::string, size_t>::const_iterator cut=cutFlow.begin(); cut != cutFlow.end(); ++cut){
-	cout<<"| "<<cut->first<<" | "<<cut->second <<" |"<<endl;
+      for(std::map<std::string, size_t>::const_iterator cut = cutFlow.begin();
+	  cut != cutFlow.end(); ++cut){
+	cout<<"| "<<cut->first << " | "<<cut->second<<" |"<<endl;
       }
       cout<<"|-"<<endl;
     }

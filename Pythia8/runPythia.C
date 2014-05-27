@@ -7,7 +7,12 @@
 #include <cstdio>
 #include <cstring>
 
+#include <algorithm>
+
 using namespace Pythia8; 
+template < class T> bool contains(const std::vector<T>& container, const T& value){
+  return std::find(container.begin(),container.end(),value)!=container.end();
+}
 
 int main(int argc, char* argv[]) 
 {
@@ -81,17 +86,11 @@ int main(int argc, char* argv[])
 	  requestedPdgId.push_back(pythia.event[i].id());
 	}
     }
-    if(requestedPdgId.size()!=3){
+    if(!(contains(requestedPdgId, 443) && 
+	 contains(requestedPdgId, 13)  &&
+	 contains(requestedPdgId, -13))){
       continue;
     }
-    if(!(requestedPdgId[0]==443 && requestedPdgId[1]==13 && requestedPdgId[2]==-13)){
-      continue;
-    }
-    // for(std::vector<int>::const_iterator pid=requestedPdgId.begin();
-    // 	pid != requestedPdgId.end(); ++pid){
-    //   string delim((pid != requestedPdgId.end()-1) ? ", " : "\n");
-    //   cout<<*pid <<delim;
-    // }
 
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
     ToHepMC.fill_next_event( pythia, hepmcevt );
