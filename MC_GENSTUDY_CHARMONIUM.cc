@@ -8,7 +8,10 @@
 // Rivet 
 #include "Rivet/Analysis.hh"
 #include "Rivet/AnalysisLoader.hh"
+#include "Rivet/Tools/BinnedHistogram.hh"
 //#include "Rivet/RivetAIDA.hh"
+// YODA
+// #include "YODA/Histo2D.h"
 
 //Projections
 #include "Rivet/Projections/FinalState.hh"
@@ -19,6 +22,7 @@ typedef std::map<std::string,Rivet::Histo1DPtr> BookedHistos;
 template <typename lvec> static void dump4vec(lvec four_mom){
   std::cout<<"( "<<four_mom.pt()<<" [GeV], "<<four_mom.eta()<<", "<<four_mom.phi()<<", "<<four_mom.mass()<<" [GeV])"<<std::endl;
 }
+
 namespace Rivet {
 
 
@@ -29,7 +33,9 @@ namespace Rivet {
     /// Constructor
     MC_GENSTUDY_CHARMONIUM()
       : Analysis("MC_GENSTUDY_CHARMONIUM"),
-	jetR(0.4)
+	jetR(0.4),
+	nPtBins(10),
+	binWidth(5)
     {    }
 
 
@@ -44,6 +50,8 @@ namespace Rivet {
       // Projections
       const FinalState fs(-4.2, 4.2, .5*GeV);
       addProjection(fs, "FS");
+      addProjection(ChargedFinalState(-4.2, 4.2, 500*MeV), "CFS");
+
       ChargedLeptons lfs(fs);
       addProjection(lfs, "LFS");
       FastJets JetProjection(fs,FastJets::ANTIKT, jetR);
@@ -59,17 +67,30 @@ namespace Rivet {
       _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 3.05, 3.15);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
+      _histograms["JPsiJetPt"] = bookHisto1D("JPsiJetPt" , 50, 0, 20);
+      _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 20);
+      _histograms["JPsiJetEta"] = bookHisto1D("JPsiJetEta" , 25, -3, 3);
+
       // Substructure variables
       _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
-      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.05);
+      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.00);
+      // cout<<"bin edges"<<endl;
+      // cout<<"---------"<<endl;
+      char histName[15];
+      for(int i=0; i < nPtBins; i++) {
+      	//cout <<binWidth*(i)<<", "<<binWidth*(i+1)<<endl;
+	sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
+	cout << histName<<endl;
+	_histograms[string(histName)] = bookHisto1D(histName,50,0,1.0);
+      }
+
     }
-
-
 
     /// Perform the per-event analysis
     void analyze(const Event& event) {
       cutFlow["Nominal"]++;
       const double weight = event.weight();
+      const FinalState& cfs = applyProjection<FinalState>(event,"CFS");
       const ChargedLeptons& lProj = applyProjection<ChargedLeptons>(event, "LFS");
       if(lProj.chargedLeptons().empty()){
 	vetoEvent;
@@ -113,8 +134,24 @@ namespace Rivet {
       _histograms["JetMult"]->fill(jets.size(),weight);
 
       //Process the particles
-
-      //FourMomentum j_psi=muons[0].momentum()+muons[1].momentum();
+      PseudoJets jPsiJetPtcls; 
+      foreach(const Particle& p, cfs.particles()){
+	if(deltaR(p,j_psi) < jetR){
+	  jPsiJetPtcls.push_back(fastjet::PseudoJet(p.momentum()));
+	}
+      }
+      if(jPsiJetPtcls.empty()){
+	vetoEvent;
+      }
+      fastjet::ClusterSequence cs(jPsiJetPtcls,fastjet::JetDefinition(fastjet::cambridge_algorithm,jetR));
+      PseudoJets jPsiJets = fastjet::sorted_by_pt(cs.inclusive_jets());
+      if(jPsiJets.empty()){
+	vetoEvent;
+      }
+      fastjet::PseudoJet& jPsiJet = jPsiJets[0];
+      _histograms["JPsiJetEta"]->fill(jPsiJet.eta());
+      _histograms["JPsiJetPt"]->fill(jPsiJet.pt(),weight);
+      _histograms["JPsiJetM"]->fill(jPsiJet.m(),weight);
 
       //fill j_psi histos
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
@@ -150,6 +187,13 @@ namespace Rivet {
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
+      char histName[15];
+      for(int i=0; i < nPtBins; i++ ){
+	if(inRange(z,double(binWidth*i),double(binWidth*(i+1)))){
+	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
+	  _histograms[histName]->fill(z,weight);
+	}
+      }
     }
 
     /// Finalize
@@ -173,7 +217,8 @@ namespace Rivet {
     BookedHistos _histograms;
     //@}
     std::map<std::string, size_t> cutFlow;
-    
+    const int nPtBins;
+    const int binWidth;
   };
 
 
