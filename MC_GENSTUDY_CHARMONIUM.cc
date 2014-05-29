@@ -58,8 +58,8 @@ namespace Rivet {
       addProjection(JetProjection,"Jets");
 
       // Histograms
-      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 20);
-      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 11);
+      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 200);
+      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 200);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
       _histograms["JetMult"] = bookHisto1D("JetMult",40,-0.5,40.5);
 
