@@ -10,6 +10,6 @@ fi
 if [ ! -d ./plots  ]; then
     mkdir plots; 
 fi
-rivet-cmphistos "$@" -o ./plots/ 
+rivet-cmphistos --no-ratio "$@" -o ./plots/ 
 cd plots; make-plots --pdf *.dat; cd ../
 

@@ -28,29 +28,30 @@ namespace Rivet{
   /// Calculate Dipolarity of Jet
   double Dipolarity(const fastjet::PseudoJet &j);
   // Calculate Pull of Jet
-  std::pair<double,double> JetPull(const FastJets& jetProjection,const fastjet::PseudoJet &j, const double ptmin=-1*GeV);
+  std::pair<double,double> JetPull(const fastjet::ClusterSequence& clusterSeq,const fastjet::PseudoJet &j, const double ptmin=-1*GeV);
   /// Calculate JetCharge
-  double JetCharge(const FastJets& jetProjection,const fastjet::PseudoJet &j, const double k=0.5, const double ptmin=-1*GeV);
+  double JetCharge(const FastJets& jetProjection, const fastjet::PseudoJet &j, const double k, const double ptmin);
+
 
   fastjet::JetAlgorithm setJetAlgorithm(FastJets::JetAlgName subJetAlgorithm);
   /// Create a filter, run it over specified jet
   /// Butterworth, Davison, Rubin and Salam, arXiv:0802.2470
-  fastjet::PseudoJet Filter(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
+  fastjet::PseudoJet Filter(const fastjet::ClusterSequence& clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
 			    int hardest,double subjet_R);
 
   /// Create a trimmer, run it over specified jet
   /// Krohn, Thaler and Wang, arXiv:0912.1342
-  fastjet::PseudoJet Trimmer(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
+  fastjet::PseudoJet Trimmer(const fastjet::ClusterSequence& clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
 			     double percentage, double subjet_R);
 
   /// Create a pruner, run it over specified jet
   /// Ellis, Vermilion and Walsh, arXiv:0903.5081
-  fastjet::PseudoJet Pruner(const fastjet::ClusterSequence* clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
+  fastjet::PseudoJet Pruner(const fastjet::ClusterSequence& clusterSeq, fastjet::PseudoJet jet, FastJets::JetAlgName subjet_def,
 			    double zcut, double Rcut_factor);
 
   /// Get N=n_jets subjets to be used for finding N-subjettiness
   /// Thaler, Van Tilburg, arXiv:1011.2268
-  PseudoJets GetAxes(const fastjet::ClusterSequence* clusterSeq, unsigned int n_jets,
+  PseudoJets GetAxes(unsigned int n_jets,
 		     PseudoJets& inputJets, FastJets::JetAlgName subjet_def, double subR);
 
   /// Get the N-subjettiness with respect to the subjet axes.

@@ -1,6 +1,6 @@
-diff -rupN boost_1_55_0/boost/concept/detail/general.hpp local/include/boost/concept/detail/general.hpp
+diff -rupN boost_1_55_0/boost/concept/detail/general.hpp boost_1_55_0.new/boost/concept/detail/general.hpp
 --- boost_1_55_0/boost/concept/detail/general.hpp	2010-06-08 15:31:13.000000000 -0400
-+++ local/include/boost/concept/detail/general.hpp	2014-05-15 22:16:58.842338833 -0400
++++ boost_1_55_0.new/boost/concept/detail/general.hpp	2014-06-02 13:14:11.700126028 -0400
 @@ -64,11 +64,19 @@ struct requirement_<void(*)(Model)>
  {};
    
@@ -22,9 +22,9 @@ diff -rupN boost_1_55_0/boost/concept/detail/general.hpp local/include/boost/con
  
  }}
  
-diff -rupN boost_1_55_0/boost/tuple/detail/tuple_basic.hpp local/include/boost/tuple/detail/tuple_basic.hpp
+diff -rupN boost_1_55_0/boost/tuple/detail/tuple_basic.hpp boost_1_55_0.new/boost/tuple/detail/tuple_basic.hpp
 --- boost_1_55_0/boost/tuple/detail/tuple_basic.hpp	2011-01-02 15:25:11.000000000 -0500
-+++ local/include/boost/tuple/detail/tuple_basic.hpp	2014-05-15 22:19:55.906337593 -0400
++++ boost_1_55_0.new/boost/tuple/detail/tuple_basic.hpp	2014-06-02 13:14:11.700126028 -0400
 @@ -214,6 +214,13 @@ get(cons<HT, TT>& c BOOST_APPEND_EXPLICI
    typedef BOOST_DEDUCED_TYPENAME impl::type cons_element;
    return const_cast<cons_element&>(impl::call(c)).head;
@@ -47,3 +47,4 @@ diff -rupN boost_1_55_0/boost/tuple/detail/tuple_basic.hpp local/include/boost/t
 +  typedef BOOST_DEDUCED_TYPENAME impl::type cons_element BOOST_CONCEPT_UNUSED_TYPEDEF;
    return impl::call(c).head;
  }
+ 

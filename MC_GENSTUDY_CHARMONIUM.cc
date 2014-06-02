@@ -18,9 +18,12 @@
 #include "Rivet/Projections/ChargedLeptons.hh"
 #include "Rivet/Projections/FastJets.hh"
 
+// Local Includes
+#include "BOOSTFastJets.h"
+
 typedef std::map<std::string,Rivet::Histo1DPtr> BookedHistos;
 template <typename lvec> static void dump4vec(lvec four_mom){
-  std::cout<<"( "<<four_mom.pt()<<" [GeV], "<<four_mom.eta()<<", "<<four_mom.phi()<<", "<<four_mom.mass()<<" [GeV])"<<std::endl;
+  std::cout<<"( "<<four_mom.pt()<<" [GeV], "<<four_mom.eta()<<", "<<four_mom.phi()<<", "<<four_mom.m()<<" [GeV])"<<std::endl;
 }
 
 namespace Rivet {
@@ -35,7 +38,7 @@ namespace Rivet {
       : Analysis("MC_GENSTUDY_CHARMONIUM"),
 	jetR(0.4),
 	nPtBins(10),
-	binWidth(5)
+	binWidth(25)
     {    }
 
 
@@ -61,27 +64,43 @@ namespace Rivet {
       _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 200);
       _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 200);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
-      _histograms["JetMult"] = bookHisto1D("JetMult",40,-0.5,40.5);
+      _histograms["JetMult"] = bookHisto1D("JetMult",8,-0.5,8.5);
 
-      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 20);
-      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 3.05, 3.15);
+      _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 250);
+      _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 2.95, 3.2);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
-      _histograms["JPsiJetPt"] = bookHisto1D("JPsiJetPt" , 50, 0, 20);
-      _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 20);
+      _histograms["JPsiJetPt"] = bookHisto1D("JPsiJetPt" , 50, 0, 400);
+      _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 200);
       _histograms["JPsiJetEta"] = bookHisto1D("JPsiJetEta" , 25, -3, 3);
 
       // Substructure variables
-      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
-      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.00);
+      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR);
+      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,2.00);
+
+      //Dipolarity 
+      _histograms["Dipolarity"]         =  bookHisto1D("Dipolarity" ,50,0.0,1.5);
+
+      //N-subjettiness histos	
+      // _histograms["JetMassFilt"]	= bookHisto1D("JetMassFilt" , 60, 0, 50);
+      // _histograms["JetMassTrim"]	= bookHisto1D("JetMassTrim" , 60, 0, 50);
+      // _histograms["JetMassPrune"]	= bookHisto1D("JetMassPrune" , 60, 0, 20);
+      // _histograms["NSubJettiness"]	= bookHisto1D("NSubJettiness" , 40, -0.005, 1.005);
+      // _histograms["NSubJettiness1Iter"]	= bookHisto1D("NSubJettiness1Iter" , 40, -0.005, 1.005);
+      // _histograms["NSubJettiness2Iter"]	= bookHisto1D("NSubJettiness2Iter" , 40, -0.005, 1.005);
+      _histograms["JetPullTheta"]       = bookHisto1D("JetPullTheta" ,50,-PI,PI);
+      _histograms["JetPullMag"]         = bookHisto1D("JetPullMag" ,50,0,0.04);
+
+
+
       // cout<<"bin edges"<<endl;
       // cout<<"---------"<<endl;
       char histName[15];
       for(int i=0; i < nPtBins; i++) {
       	//cout <<binWidth*(i)<<", "<<binWidth*(i+1)<<endl;
 	sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
-	cout << histName<<endl;
-	_histograms[string(histName)] = bookHisto1D(histName,50,0,1.0);
+	//cout << histName<<endl;
+	_histograms[string(histName)] = bookHisto1D(histName,50,0,2.0);
       }
 
     }
@@ -124,9 +143,9 @@ namespace Rivet {
       if(j_psi.mass()==0) {
 	vetoEvent;
       }
-      // dump4vec(j_psi);
+
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
-      const Jets jets = jetProj.jetsByPt(1*GeV);
+      const Jets jets = jetProj.jetsByPt(45*GeV);
       if(jets.empty()){
 	vetoEvent;
       }
@@ -148,10 +167,33 @@ namespace Rivet {
       if(jPsiJets.empty()){
 	vetoEvent;
       }
+      cutFlow["jPsiJetRad"]++;
       fastjet::PseudoJet& jPsiJet = jPsiJets[0];
+      _histograms["JPsiJetPt"]->fill(jPsiJet.pt());
       _histograms["JPsiJetEta"]->fill(jPsiJet.eta());
-      _histograms["JPsiJetPt"]->fill(jPsiJet.pt(),weight);
-      _histograms["JPsiJetM"]->fill(jPsiJet.m(),weight);
+      //dump4vec(jPsiJet);
+      //FIXME The mass is negative!
+      _histograms["JPsiJetM"]->fill(fabs(jPsiJet.m()));
+      
+      _histograms["Dipolarity"]->fill(Dipolarity(jPsiJet),weight);
+      const std::pair<double,double> tvec=JetPull(cs,jPsiJet);
+      _histograms["JetPullMag"]->fill(tvec.first,weight);
+      if(tvec.first > 0) {
+	_histograms["JetPullTheta"]->fill(tvec.second,weight);
+      }
+      // _histograms["JetMassFilt"]->fill(Filter(cs,jPsiJet, FastJets::CAM, 3, 0.3).m(), weight);
+      // _histograms["JetMassTrim"]->fill(Trimmer(cs,jPsiJet, FastJets::CAM, 0.03, 0.3).m(), weight);
+      // _histograms["JetMassPrune"]->fill(Pruner(cs,jPsiJet, FastJets::CAM, 0.4, 0.1).m(), weight);
+      // PseudoJets constituents = jPsiJet.constituents();
+      // if (constituents.size() > 10) {
+      // 	PseudoJets axes(GetAxes(cs, 2, constituents, FastJets::CAM, 0.4));
+      // 	_histograms["NSubJettiness"]->fill(TauValue(2, 1, constituents, axes), weight);
+      // 	UpdateAxes(2, constituents, axes);
+      // 	_histograms["NSubJettiness1Iter"]->fill(TauValue(2, 1, constituents, axes), weight);
+      // 	UpdateAxes(2, constituents, axes);
+      // 	_histograms["NSubJettiness2Iter"]->fill(TauValue(2, 1, constituents, axes), weight);
+      // }
+
 
       //fill j_psi histos
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
@@ -168,13 +210,20 @@ namespace Rivet {
 	  candDelR=delR;
       	}
       }
+      /*
+      foreach(const Particle& p, charmJet.particles()){
+	if(abs(p.pid())==13){
+	  cout <<"Jet Contains muons!"<<endl;
+	}
+	if(abs(p.pid())==443){
+	  cout <<"Jet Contains J/Psi!"<<endl;
+	}
+      }
+      //*/
       if(isinf(deltaR(charmJet,j_psi))){
 	vetoEvent;
       }
       cutFlow["charmJetMatch"]++;
-      if(isinf(deltaR(charmJet,j_psi))) {
-      	vetoEvent;
-      }
 
       _histograms["DeltaR"]->fill(deltaR(j_psi,charmJet),weight);
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
@@ -183,14 +232,15 @@ namespace Rivet {
 
 
       //calculate substructure variables
-      const double z(charmJet.pt()+j_psi.pt() > 0 ? j_psi.pt()/(charmJet.pt() + j_psi.pt()) : -1.);
+      const double z(charmJet.pt()/*+j_psi.pt()*/ > 0 ? j_psi.pt()/(charmJet.pt() /*+ j_psi.pt()*/) : -1.);
       
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
       char histName[15];
       for(int i=0; i < nPtBins; i++ ){
-	if(inRange(z,double(binWidth*i),double(binWidth*(i+1)))){
+	if(inRange(charmJet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
 	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
+	  //cout << "Filling "<<histName<<"With pT"<< charmJet.pt()<<endl;
 	  _histograms[histName]->fill(z,weight);
 	}
       }

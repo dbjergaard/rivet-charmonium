@@ -8,6 +8,9 @@
 #include <cstring>
 
 #include <algorithm>
+#include <iostream>
+
+#include <map> 
 
 using namespace Pythia8; 
 template < class T> bool contains(const std::vector<T>& container, const T& value){
@@ -69,8 +72,10 @@ int main(int argc, char* argv[])
   int iAbort = 0;
   int nGenerated=0;
   std::vector<int> requestedPdgId;//(3,0);
+  std::map<int,int> particleMap;
   while(nGenerated < nRequested) {
     requestedPdgId.clear();
+    particleMap.clear();
     if (!pythia.next()) {
       if (pythia.info.atEndOfFile()) {
 	cout << " Aborted since reached end of Les Houches Event File\n"; 
@@ -82,19 +87,31 @@ int main(int argc, char* argv[])
       break;
     }
     for(int i=0; i < pythia.event.size(); i++){
-	if(abs(pythia.event[i].id())==443 || abs(pythia.event[i].id())==13){
-	  requestedPdgId.push_back(pythia.event[i].id());
-	}
+      if(abs(pythia.event[i].id())==443 || abs(pythia.event[i].id())==13){
+	requestedPdgId.push_back(pythia.event[i].id());
+      }
     }
     if(!(contains(requestedPdgId, 443) && 
 	 contains(requestedPdgId, 13)  &&
 	 contains(requestedPdgId, -13))){
       continue;
     }
+    for(int i=0; i < pythia.event.size(); i++){
+      //cout << pythia.event[i].id() << ", ";
+      const Particle& ptcl = pythia.event[i];
+      particleMap[ptcl.id()]++;
+      cout << ptcl.daughterList().size()<<endl;
+      cout << ptcl.motherList().size()<<endl;
+    }
+    //cout << endl << endl;
+    cout <<" ID | Multiplicity" << endl;
+    for(std::map<int,int>::const_iterator it=particleMap.begin(); it != particleMap.end(); ++it){
+      cout <<it->first << " | "<< it->second << endl;
+    }
 
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
     ToHepMC.fill_next_event( pythia, hepmcevt );
-    ascii_io << hepmcevt;
+    ascii_io << hepmcevt ;
     delete hepmcevt;
     nGenerated++;
   }
