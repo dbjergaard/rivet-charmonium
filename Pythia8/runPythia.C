@@ -16,6 +16,21 @@ using namespace Pythia8;
 template < class T> bool contains(const std::vector<T>& container, const T& value){
   return std::find(container.begin(),container.end(),value)!=container.end();
 }
+//this will crash and burn...
+const Particle& find_ptcl(const int pid,const Event& evt){
+  return evt[pid];
+}
+void print_family_tree(const Particle& ptcl, const Event& evt){
+  vector<int> daughters = ptcl.daughterList();
+  cout <<"( "<<ptcl.id() << " ";
+  if(daughters.size() > 0){
+    for(vector<int>::const_iterator d=daughters.begin(); d!=daughters.end(); ++d ){
+      print_family_tree(find_ptcl(*d, evt),evt);
+    }
+  }
+  cout <<")"<<endl;
+  return;
+}
 
 int main(int argc, char* argv[]) 
 {
@@ -26,10 +41,14 @@ int main(int argc, char* argv[])
   //seed = "1370";
   strncpy(tune,"5",25);
   strncpy(seed,"1370",25);
+  //TODO this has gotten big enough to require real command line
+  //options, setup and option parser and do it right.  Someone's going
+  //to get headaches over this very soon
 
+  //TODO add seeds back as an option, required for running on condor!
   if(argc < 2)
     {
-      cerr<<"Usage: "<<argv[0]<<" [config file] [out file] [seed] [tune]"<<endl;
+      cerr<<"Usage: "<<argv[0]<<" [config file] [out file] [conf lines ...]"<<endl;
       return 1;
     }
   ifstream is(argv[1]);  
@@ -38,18 +57,14 @@ int main(int argc, char* argv[])
          << " Program stopped! " << endl;
     return 1;
   }
-
   cout<<"Configuring PYTHIA from "<<argv[1]<<endl;
   cout<<"Writing output to "<<argv[2]<<endl;
+  vector<std::string> commandStrings;
+  for(int i=3; i < argc; i++){
+    commandStrings.push_back(string(argv[i]));
+    cout <<" Got Pythia command: "<<commandStrings.back()<<endl;
+  }
 
-  if(argc > 4){
-    strncpy(seed,argv[3],25);
-  }
-  if(argc > 5){
-    strncpy(tune,argv[4],25);
-  }
-  cout <<"Using Seed " << tune <<endl;
-  cout <<"Using Tune "<< seed <<endl;
   cout <<"Warning, command line arguments aren't type-checked, don't be stupid." <<endl;
   HepMC::Pythia8ToHepMC ToHepMC;
   HepMC::IO_GenEvent ascii_io(argv[2], std::ios::out);
@@ -67,15 +82,16 @@ int main(int argc, char* argv[])
   sprintf(processline,"Tune:pp = %s",tune);
   pythia.readString(processline);
 
+  for(std::vector<std::string>::const_iterator cmd = commandStrings.begin(); cmd != commandStrings.end(); ++cmd){
+    pythia.readString(*cmd);
+  }
   pythia.init();
   
   int iAbort = 0;
   int nGenerated=0;
   std::vector<int> requestedPdgId;//(3,0);
-  std::map<int,int> particleMap;
   while(nGenerated < nRequested) {
     requestedPdgId.clear();
-    particleMap.clear();
     if (!pythia.next()) {
       if (pythia.info.atEndOfFile()) {
 	cout << " Aborted since reached end of Les Houches Event File\n"; 
@@ -95,18 +111,6 @@ int main(int argc, char* argv[])
 	 contains(requestedPdgId, 13)  &&
 	 contains(requestedPdgId, -13))){
       continue;
-    }
-    for(int i=0; i < pythia.event.size(); i++){
-      //cout << pythia.event[i].id() << ", ";
-      const Particle& ptcl = pythia.event[i];
-      particleMap[ptcl.id()]++;
-      cout << ptcl.daughterList().size()<<endl;
-      cout << ptcl.motherList().size()<<endl;
-    }
-    //cout << endl << endl;
-    cout <<" ID | Multiplicity" << endl;
-    for(std::map<int,int>::const_iterator it=particleMap.begin(); it != particleMap.end(); ++it){
-      cout <<it->first << " | "<< it->second << endl;
     }
 
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
