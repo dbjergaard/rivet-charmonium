@@ -68,15 +68,11 @@ namespace Rivet {
   }
 
   ///Q===\Sum_{i\in J} q_i*p_{Ti}^k/p_{TJ}
-  double JetCharge(const FastJets& jetProjection, const fastjet::PseudoJet &j, const double k, const double ptmin) {
-    assert(jetProjection.clusterSeq());
-    const PseudoJets parts = jetProjection.clusterSeq()->constituents(j);
+  double JetCharge(const Jet& jet, const fastjet::PseudoJet &j, const double k, const double ptmin) {
     double q(0);
-    foreach (const fastjet::PseudoJet& p, parts) {
-      map<int, Particle>::const_iterator found = jetProjection.particles().find(p.user_index());
-      assert(found != jetProjection.particles().end());
-      if(p.pt() < ptmin) continue; //pt always > 0, if the user hasn't defined a cut, this will always pass
-      q += PID::charge(found->second) * pow(p.pt(),k);
+    foreach (const Particle& p, jet.particles()) {
+      if(p.pt() < ptmin) continue; 
+      q += p.charge() * pow(p.pt(),k);
     }
     return q/pow(j.pt(),k);
   }

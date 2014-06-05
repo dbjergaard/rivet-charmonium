@@ -61,8 +61,8 @@ namespace Rivet {
       addProjection(JetProjection,"Jets");
 
       // Histograms
-      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 200);
-      _histograms["JetM"] = bookHisto1D("JetM" , 25, 0, 200);
+      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 250);
+      _histograms["JetM"] = bookHisto1D("JetM" , 50, 0, 100);
       _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
       _histograms["JetMult"] = bookHisto1D("JetMult",8,-0.5,8.5);
 
@@ -70,16 +70,16 @@ namespace Rivet {
       _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 2.95, 3.2);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
 
-      _histograms["JPsiJetPt"] = bookHisto1D("JPsiJetPt" , 50, 0, 400);
-      _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 200);
+      _histograms["JPsiJetPt"] = bookHisto1D("JPsiJetPt" , 50, 0, 450);
+      _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 225);
       _histograms["JPsiJetEta"] = bookHisto1D("JPsiJetEta" , 25, -3, 3);
 
       // Substructure variables
-      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR);
+      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
       _histograms["JetZ"] = bookHisto1D("JetZ",50,0,2.00);
 
       //Dipolarity 
-      _histograms["Dipolarity"]         =  bookHisto1D("Dipolarity" ,50,0.0,1.5);
+      _histograms["Dipolarity"]         =  bookHisto1D("Dipolarity" ,50,0.0,2);
 
       //N-subjettiness histos	
       // _histograms["JetMassFilt"]	= bookHisto1D("JetMassFilt" , 60, 0, 50);
@@ -89,7 +89,7 @@ namespace Rivet {
       // _histograms["NSubJettiness1Iter"]	= bookHisto1D("NSubJettiness1Iter" , 40, -0.005, 1.005);
       // _histograms["NSubJettiness2Iter"]	= bookHisto1D("NSubJettiness2Iter" , 40, -0.005, 1.005);
       _histograms["JetPullTheta"]       = bookHisto1D("JetPullTheta" ,50,-PI,PI);
-      _histograms["JetPullMag"]         = bookHisto1D("JetPullMag" ,50,0,0.04);
+      _histograms["JetPullMag"]         = bookHisto1D("JetPullMag" ,50,0,0.06);
 
 
 
@@ -134,13 +134,13 @@ namespace Rivet {
       foreach(const Particle& mu1, muons){
 	foreach(const Particle& mu2, muons){
 	  cand=mu1.momentum()+mu2.momentum();
-	  if(mu1.pid()*mu2.pid() < 0 && cand.mass()-j_psi_m < deltaM ){
+	  if(mu1.pid()*mu2.pid() < 0 && fabs(cand.mass()-j_psi_m) < deltaM ){
 	    j_psi=cand;
-	    deltaM=cand.mass()-j_psi_m;
+	    deltaM=fabs(cand.mass()-j_psi_m);
 	  }
 	}
       }
-      if(j_psi.mass()==0) {
+      if(j_psi.mass()==0 || deltaM > .2) { //reject if ~2*width of J/psi
 	vetoEvent;
       }
 
@@ -210,16 +210,6 @@ namespace Rivet {
 	  candDelR=delR;
       	}
       }
-      /*
-      foreach(const Particle& p, charmJet.particles()){
-	if(abs(p.pid())==13){
-	  cout <<"Jet Contains muons!"<<endl;
-	}
-	if(abs(p.pid())==443){
-	  cout <<"Jet Contains J/Psi!"<<endl;
-	}
-      }
-      //*/
       if(isinf(deltaR(charmJet,j_psi))){
 	vetoEvent;
       }
@@ -229,7 +219,6 @@ namespace Rivet {
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
       _histograms["JetM"]->fill(charmJet.mass(),weight);
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
-
 
       //calculate substructure variables
       const double z(charmJet.pt()/*+j_psi.pt()*/ > 0 ? j_psi.pt()/(charmJet.pt() /*+ j_psi.pt()*/) : -1.);

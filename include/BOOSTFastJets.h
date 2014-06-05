@@ -30,8 +30,7 @@ namespace Rivet{
   // Calculate Pull of Jet
   std::pair<double,double> JetPull(const fastjet::ClusterSequence& clusterSeq,const fastjet::PseudoJet &j, const double ptmin=-1*GeV);
   /// Calculate JetCharge
-  double JetCharge(const FastJets& jetProjection, const fastjet::PseudoJet &j, const double k, const double ptmin);
-
+  double JetCharge(const Jet& jet, const fastjet::PseudoJet &j, const double k, const double ptmin=-1.);
 
   fastjet::JetAlgorithm setJetAlgorithm(FastJets::JetAlgName subJetAlgorithm);
   /// Create a filter, run it over specified jet
