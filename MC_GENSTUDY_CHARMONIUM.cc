@@ -246,14 +246,14 @@ namespace Rivet {
       
       char histName[25];
       for(int i=0; i < nPtBins; i++ ){
-	if(inRange(charmJet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
-	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
-	  _histograms[histName]->fill(z,weight);
-	}
-	if(inRange(jPsiJet.pt(),double(1.8*binWidth*i),double(1.8*binWidth*(i+1)))){
-	  sprintf(histName,"JPsiJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
-	  _histograms[histName]->fill(z,weight);
-	}
+      	if(inRange(charmJet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
+      	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
+      	  _histograms[histName]->fill(z,weight);
+      	}
+      	if(inRange(jPsiJet.pt(),double(1.8*binWidth*i),double(1.8*binWidth*(i+1)))){
+      	  sprintf(histName,"JPsiJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
+      	  _histograms[histName]->fill(z,weight);
+      	}
       }
     }
 
@@ -274,7 +274,7 @@ namespace Rivet {
   private:
     void fillJetZ(const char* key,const int zVal, const double z,const double pt,const double weight){
       char histName[25];
-      snprintf(histName,25,"%sZ%d",key,zVal);
+      snprintf(histName,25,"%sPtZ%d",key,zVal);
       if(fuzzyEquals(z,zVal*0.1,0.1)){
 	_histograms[histName]->fill(pt,weight);
       }
