@@ -74,9 +74,18 @@ namespace Rivet {
       _histograms["JPsiJetM"] = bookHisto1D("JPsiJetM" , 50, 0, 225);
       _histograms["JPsiJetEta"] = bookHisto1D("JPsiJetEta" , 25, -3, 3);
 
+      _histograms["JPsiJetPtZ3"] = bookHisto1D("JPsiJetPtZ3" , 50, 0, 450);
+      _histograms["JPsiJetPtZ5"] = bookHisto1D("JPsiJetPtZ5" , 50, 0, 450);
+      _histograms["JPsiJetPtZ8"] = bookHisto1D("JPsiJetPtZ8" , 50, 0, 450);
+
+      _histograms["JetPtZ3"] = bookHisto1D("JetPtZ3" , 50, 0, 250);
+      _histograms["JetPtZ5"] = bookHisto1D("JetPtZ5" , 50, 0, 250);
+      _histograms["JetPtZ8"] = bookHisto1D("JetPtZ8" , 50, 0, 250);
+      
       // Substructure variables
       _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
-      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,2.00);
+      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.10);
+      _histograms["JPsiJetZ"] = bookHisto1D("JetZ",50,0,1.10);
 
       //Dipolarity 
       _histograms["Dipolarity"]         =  bookHisto1D("Dipolarity" ,50,0.0,2);
@@ -92,14 +101,15 @@ namespace Rivet {
       _histograms["JetPullMag"]         = bookHisto1D("JetPullMag" ,50,0,0.06);
 
 
-
-      // cout<<"bin edges"<<endl;
-      // cout<<"---------"<<endl;
-      char histName[15];
+      char histName[25];
       for(int i=0; i < nPtBins; i++) {
-      	//cout <<binWidth*(i)<<", "<<binWidth*(i+1)<<endl;
 	sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
-	//cout << histName<<endl;
+	_histograms[string(histName)] = bookHisto1D(histName,50,0,2.0);
+      }
+      for(int i=0; i < nPtBins; i++) {
+	//FIXME this should be its own binwidth, its set to scale 250
+	//to 450 for the highest bin
+	sprintf(histName,"JPsiJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
 	_histograms[string(histName)] = bookHisto1D(histName,50,0,2.0);
       }
 
@@ -221,15 +231,27 @@ namespace Rivet {
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
 
       //calculate substructure variables
-      const double z(charmJet.pt()/*+j_psi.pt()*/ > 0 ? j_psi.pt()/(charmJet.pt() /*+ j_psi.pt()*/) : -1.);
-      
+      const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
+      const double z_jpsi(jPsiJet.pt() > 0 ? j_psi.pt()/jPsiJet.pt() : -1.);
       //fill substructure histos
       _histograms["JetZ"]->fill(z,weight);
-      char histName[15];
+      _histograms["JPsiJetZ"]->fill(z_jpsi,weight);
+      fillJetZ("Jet",3,z,charmJet.pt(),weight);
+      fillJetZ("Jet",5,z,charmJet.pt(),weight);
+      fillJetZ("Jet",8,z,charmJet.pt(),weight);
+
+      fillJetZ("JPsiJet",3,z_jpsi,jPsiJet.pt(),weight);
+      fillJetZ("JPsiJet",5,z_jpsi,jPsiJet.pt(),weight);
+      fillJetZ("JPsiJet",8,z_jpsi,jPsiJet.pt(),weight);
+      
+      char histName[25];
       for(int i=0; i < nPtBins; i++ ){
 	if(inRange(charmJet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
 	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
-	  //cout << "Filling "<<histName<<"With pT"<< charmJet.pt()<<endl;
+	  _histograms[histName]->fill(z,weight);
+	}
+	if(inRange(jPsiJet.pt(),double(1.8*binWidth*i),double(1.8*binWidth*(i+1)))){
+	  sprintf(histName,"JPsiJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
 	  _histograms[histName]->fill(z,weight);
 	}
       }
@@ -250,6 +272,13 @@ namespace Rivet {
 
 
   private:
+    void fillJetZ(const char* key,const int zVal, const double z,const double pt,const double weight){
+      char histName[25];
+      snprintf(histName,25,"%sZ%d",key,zVal);
+      if(fuzzyEquals(z,zVal*0.1,0.1)){
+	_histograms[histName]->fill(pt,weight);
+      }
+    }
     double jetR;
     /// @name Histograms
     //@{
