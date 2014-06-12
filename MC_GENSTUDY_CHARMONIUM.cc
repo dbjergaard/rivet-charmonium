@@ -84,6 +84,7 @@ namespace Rivet {
       
       // Substructure variables
       _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
+      _histograms["JPsiDeltaR"] = bookHisto1D("JPsiDeltaR",50,0,jetR+0.1);
       _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.10);
       _histograms["JPsiJetZ"] = bookHisto1D("JetZ",50,0,1.10);
 
@@ -229,6 +230,8 @@ namespace Rivet {
       _histograms["JetPt"]->fill(charmJet.pt(),weight);
       _histograms["JetM"]->fill(charmJet.mass(),weight);
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
+
+      _histograms["JPsiDeltaR"]->fill(deltaR(j_psi,jPsiJet),weight);
 
       //calculate substructure variables
       const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);

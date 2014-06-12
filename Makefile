@@ -15,23 +15,23 @@ RivetMC_GENSTUDY_CHARMONIUM.so: libBOOSTFastJets.so MC_GENSTUDY_CHARMONIUM.cc
 libBOOSTFastJets.so: src/BOOSTFastJets.cxx
 	$(CC) -shared -fPIC $(CFLAGS) $< -o $@ -lfastjet -lfastjettools $(LDFLAGS)
 
-plots: JetZvsPt.pdf 
+plots: JetZvsPtProfile.pdf 
 %.pdf: %.tex
 	pdflatex $<
-%.tex: %.plt
+%.tex: %.gnu
 	gnuplot $<
 plots/%.pdf: plots/%.dat
 	make-plots --pdf $^
 plots/%.dat: %.yoda
 	rivet-cmphistos $^ -o plots/
 
-JetZvsPt.plt:
-	./makeZPtPlot.py 1S0(8).yoda 3PJ(8).yoda 3S1(8).yoda 3PJ(1).yoda 3S1(1).yoda
+%ZvsPtProfile.gnu:
+	./makeZPtProfile.py 1S0\(8\).yoda 3PJ\(8\).yoda 3S1\(8\).yoda 3PJ\(1\).yoda 3S1\(1\).yoda
+%ZvsPt%Plot.gnu:
+	./makeZPtPlot.py 1S0\(8\).yoda 3PJ\(8\).yoda 3S1\(8\).yoda 3PJ\(1\).yoda 3S1\(1\).yoda
 
 install:
 	cp libBOOSTFastJets.so $(LIBDIR)
-#	cp RivetMC_GENSTUDY_CHARMONIUM.so $(LIBDIR) 
-#	cp MC_GENSTUDY_CHARMONIUM.plot $(PREFIX)/share
-#	cp MC_GENSTUDY_CHARMONIUM.info $(PREFIX)/share
+
 clean:
 	rm -f *.o  *.so

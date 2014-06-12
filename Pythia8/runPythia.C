@@ -32,8 +32,7 @@ void print_family_tree(const Particle& ptcl, const Event& evt){
   return;
 }
 
-int main(int argc, char* argv[]) 
-{
+int main(int argc, char* argv[]) {
   char tune[25];
   char seed[25];
 
