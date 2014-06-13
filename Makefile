@@ -17,22 +17,24 @@ libBOOSTFastJets.so: src/BOOSTFastJets.cxx
 SAMPLES=1S0_8 3PJ_8 3S1_8 3PJ_1 3S1_1
 YODAFILES:=$(addsuffix .yoda,$(SAMPLES))
 PLOTFILES:=$(addsuffix Plot.pdf,$(addprefix JetZvsPt,$(SAMPLES)))
-plots: JetZvsPtProfile.pdf #$(PLOTFILES)
+plots: JetZvsPtProfile.pdf $(PLOTFILES) rivet-plots
 
+plotBook.pdf: plots
+	pdftk $(PLOTFILES) JetZvsPtProfile.pdf plots/*.pdf cat output plotBook.pdf
 %.pdf: %.tex
 	pdflatex $<
+
 %.tex: %.gnu
 	gnuplot $<
-plots/%.pdf: plots/%.dat
+rivet-plots: plots/*.dat
 	make-plots --pdf $^
-plots/%.dat: %.yoda
+plots/%.dat: $(YODAFILES)
 	rivet-cmphistos $^ -o plots/
 
-%ZvsPtProfile.gnu: 
-	./makeZPtProfile.py $(YODAFILES)
-%ZvsPt%Plot.gnu: $(YODAFILES)
-	./makeZPtPlot.py $(YODAFILES)
-
+%ZvsPtProfile.gnu: $(YODAFILES)
+	./makeZPtProfile.py $^
+JetZvsPt%Plot.gnu: $(YODAFILES)
+	./makeZPtPlot.py $^
 install:
 	cp libBOOSTFastJets.so $(LIBDIR)
 
