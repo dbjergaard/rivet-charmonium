@@ -231,7 +231,10 @@ namespace Rivet {
       _histograms["JetM"]->fill(charmJet.mass(),weight);
       _histograms["JetEta"]->fill(charmJet.eta(),weight);
 
-      _histograms["JPsiDeltaR"]->fill(deltaR(j_psi,jPsiJet),weight);
+      _histograms["JPsiDeltaR"]->fill(deltaR(j_psi,FourMomentum(jPsiJet.e(),
+								jPsiJet.px(),
+								jPsiJet.py(),
+								jPsiJet.pz())),weight);
 
       //calculate substructure variables
       const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);

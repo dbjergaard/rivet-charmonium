@@ -1,32 +1,34 @@
 CC=g++
 
-INCDIR=$(PWD)/include
 LIBDIR:=$(shell rivet-config --libdir)
-PREFIX:=$(shell rivet-config --prefix)
-RIVETINCDIR:=$(shell rivet-config --includedir)
+
+INCDIR=$(PWD)/include
+RIVETINCDIR:=$(shell rivet-config --cppflags)
 LDFLAGS:=$(shell rivet-config --ldflags)
-WFLAGS= -Wall -Wextra
-CFLAGS=-m64 -pg -I$(INCDIR) -I$(RIVETINCDIR) -O2 $(WFLAGS) -pedantic -ansi
-.PHONY: all plots
-all: rivet-lib 
-rivet-lib: RivetMC_GENSTUDY_CHARMONIUM.so libBOOSTFastJets.so
-RivetMC_GENSTUDY_CHARMONIUM.so: libBOOSTFastJets.so MC_GENSTUDY_CHARMONIUM.cc
-	$(CC) -shared -fPIC $(CFLAGS) -o "$@" $< -lBOOSTFastJets -L ./ $(LDFLAGS)
-libBOOSTFastJets.so: src/BOOSTFastJets.cxx
-	$(CC) -shared -fPIC $(CFLAGS) $< -o $@ -lfastjet -lfastjettools $(LDFLAGS)
+WFLAGS= -Wall -Wno-long-long -Wno-format -Werror=uninitialized -Werror=delete-non-virtual-dtor  -Wno-unused-local-typedefs
+CFLAGS= -I$(INCDIR) $(RIVETINCDIR) -pedantic -ansi $(WFLAGS) -O2 -Wl,--no-as-needed -lRivet
 SAMPLES=1S0_8 3PJ_8 3S1_8 3PJ_1 3S1_1
 YODAFILES:=$(addsuffix .yoda,$(SAMPLES))
 PLOTFILES:=$(addsuffix Plot.pdf,$(addprefix JetZvsPt,$(SAMPLES)))
-plots: JetZvsPtProfile.pdf $(PLOTFILES) rivet-plots
 
+.PHONY: all plots rivet-plots plot-book
+all: rivet-lib 
+rivet-lib: RivetMC_GENSTUDY_CHARMONIUM.so libBOOSTFastJets.so
+RivetMC_GENSTUDY_CHARMONIUM.so:  MC_GENSTUDY_CHARMONIUM.cc libBOOSTFastJets.so
+	$(CC) -o "$@" -shared -fPIC $(CFLAGS) $< -lBOOSTFastJets $(LDFLAGS)
+libBOOSTFastJets.so: src/BOOSTFastJets.cxx
+	$(CC) -shared -fPIC $(CFLAGS) $< -o $@ -lfastjet -lfastjettools $(LDFLAGS)
+plots: JetZvsPtProfile.pdf $(PLOTFILES) rivet-plots
+plot-book: plotBook.pdf
 plotBook.pdf: plots
 	pdftk $(PLOTFILES) JetZvsPtProfile.pdf plots/*.pdf cat output plotBook.pdf
 %.pdf: %.tex
 	pdflatex $<
-
 %.tex: %.gnu
 	gnuplot $<
-rivet-plots: plots/*.dat
+# Maybe a make expert can tell me why this rule always gets built even
+# if the dat files haven't changed.
+rivet-plots: $(wildcard plots/*.dat)
 	make-plots --pdf $^
 plots/%.dat: $(YODAFILES)
 	rivet-cmphistos $^ -o plots/
