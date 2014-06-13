@@ -37,12 +37,12 @@ def writeCoords(histos, fName):
     sys.stdout.write("#+END_PLOT\n")
     #datFile.close()
 # from colorbrewer2.org
-color_palettes={'blue':['#eff3ff','#c6dbef','#9ecae1','#6baed6','#4292c6','#2171b5','#084594'],
-                'red':['#fee5d9','#fcbba1','#fc9272','#fb6a4a','#ef3b2c','#cb181d','#99000d'],
-                'green':['#edf8e9','#c7e9c0','#a1d99b','#74c476','#41ab5d','#238b45','#005a32'],
-                'purple':['#f2f0f7','#dadaeb','#bcbddc','#9e9ac8','#807dba','#6a51a3','#4a1486'],
-                'orange':['#feedde','#fdd0a2','#fdae6b','#fd8d3c','#f16913','#d94801','#8c2d04'],
-                'black':['#f7f7f7','#d9d9d9','#bdbdbd','#969696','#737373','#525252','#252525']}
+color_palettes={"blue":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#eff3ff"],
+                "red":["#99000d","#cb181d","#ef3b2c","#fb6a4a","#fc9272","#fcbba1","#fee5d9"],
+                "green":["#005a32","#238b45","#41ab5d","#74c476","#a1d99b","#c7e9c0","#edf8e9"],
+                "purple":["#4a1486","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#f2f0f7"],
+                "orange":["#8c2d04","#d94801","#f16913","#fd8d3c","#fdae6b","#fdd0a2","#feedde"],
+                "black":["#252525","#525252","#737373","#969696","#bdbdbd","#d9d9d9","#f7f7f7"]}
 def writeGnuPlot(outBName):
     outFile=open(outBName+'.gnu','w')
     outFile.write('set term tikz standalone color solid size 5in,3in\n')

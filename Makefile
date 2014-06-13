@@ -14,8 +14,11 @@ RivetMC_GENSTUDY_CHARMONIUM.so: libBOOSTFastJets.so MC_GENSTUDY_CHARMONIUM.cc
 	$(CC) -shared -fPIC $(CFLAGS) -o "$@" $< -lBOOSTFastJets -L ./ $(LDFLAGS)
 libBOOSTFastJets.so: src/BOOSTFastJets.cxx
 	$(CC) -shared -fPIC $(CFLAGS) $< -o $@ -lfastjet -lfastjettools $(LDFLAGS)
+SAMPLES=1S0_8 3PJ_8 3S1_8 3PJ_1 3S1_1
+YODAFILES:=$(addsuffix .yoda,$(SAMPLES))
+PLOTFILES:=$(addsuffix Plot.pdf,$(addprefix JetZvsPt,$(SAMPLES)))
+plots: JetZvsPtProfile.pdf #$(PLOTFILES)
 
-plots: JetZvsPtProfile.pdf 
 %.pdf: %.tex
 	pdflatex $<
 %.tex: %.gnu
@@ -25,10 +28,10 @@ plots/%.pdf: plots/%.dat
 plots/%.dat: %.yoda
 	rivet-cmphistos $^ -o plots/
 
-%ZvsPtProfile.gnu:
-	./makeZPtProfile.py 1S0\(8\).yoda 3PJ\(8\).yoda 3S1\(8\).yoda 3PJ\(1\).yoda 3S1\(1\).yoda
-%ZvsPt%Plot.gnu:
-	./makeZPtPlot.py 1S0\(8\).yoda 3PJ\(8\).yoda 3S1\(8\).yoda 3PJ\(1\).yoda 3S1\(1\).yoda
+%ZvsPtProfile.gnu: 
+	./makeZPtProfile.py $(YODAFILES)
+%ZvsPt%Plot.gnu: $(YODAFILES)
+	./makeZPtPlot.py $(YODAFILES)
 
 install:
 	cp libBOOSTFastJets.so $(LIBDIR)

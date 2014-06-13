@@ -75,10 +75,12 @@ def main():
     if(len(args)==0):
         parser.print_help()
         return 1
-    histos = getPtHistos(args)
-    for yFile in histos:
-        writeCoords(histos[yFile],yFile)
-    printGnuPlot('JetZvsPtProfile',histos)
+    print args
+    
+    # histos = getPtHistos(args)
+    # for yFile in histos:
+    #     writeCoords(histos[yFile],yFile)
+    # printGnuPlot('JetZvsPtProfile',histos)
 
 if __name__ == '__main__':
     sys.exit(main())
