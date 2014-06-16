@@ -61,35 +61,11 @@ namespace Rivet {
       addProjection(JetProjection,"Jets");
 
       // Histograms
-      _histograms["JetPt"] = bookHisto1D("JetPt" , 50, 0, 250);
-      _histograms["JetM"] = bookHisto1D("JetM" , 50, 0, 100);
-      _histograms["JetEta"] = bookHisto1D("JetEta" , 25, -3, 3);
       _histograms["JetMult"] = bookHisto1D("JetMult",8,-0.5,8.5);
 
       _histograms["JPsiPt"] = bookHisto1D("JPsiPt" , 50, 0, 250);
       _histograms["JPsiM"] = bookHisto1D("JPsiM" , 50, 2.95, 3.2);
       _histograms["JPsiEta"] = bookHisto1D("JPsiEta" , 25, -3, 3);
-
-      _histograms["ConeJetPt"] = bookHisto1D("ConeJetPt" , 50, 0, 450);
-      _histograms["ConeJetM"] = bookHisto1D("ConeJetM" , 50, 0, 225);
-      _histograms["ConeJetEta"] = bookHisto1D("ConeJetEta" , 25, -3, 3);
-
-      _histograms["ConeJetPtZ3"] = bookHisto1D("ConeJetPtZ3" , 50, 0, 450);
-      _histograms["ConeJetPtZ5"] = bookHisto1D("ConeJetPtZ5" , 50, 0, 450);
-      _histograms["ConeJetPtZ8"] = bookHisto1D("ConeJetPtZ8" , 50, 0, 450);
-
-      _histograms["JetPtZ3"] = bookHisto1D("JetPtZ3" , 50, 0, 250);
-      _histograms["JetPtZ5"] = bookHisto1D("JetPtZ5" , 50, 0, 250);
-      _histograms["JetPtZ8"] = bookHisto1D("JetPtZ8" , 50, 0, 250);
-      
-      // Substructure variables
-      _histograms["DeltaR"] = bookHisto1D("DeltaR",50,0,jetR+0.1);
-      _histograms["JPsiDeltaR"] = bookHisto1D("JPsiDeltaR",50,0,jetR+0.1);
-      _histograms["JetZ"] = bookHisto1D("JetZ",50,0,1.10);
-      _histograms["ConeJetZ"] = bookHisto1D("JetZ",50,0,1.10);
-
-      //Dipolarity 
-      _histograms["Dipolarity"]         =  bookHisto1D("Dipolarity" ,50,0.0,2);
 
       //N-subjettiness histos	
       // _histograms["JetMassFilt"]	= bookHisto1D("JetMassFilt" , 60, 0, 50);
@@ -98,9 +74,13 @@ namespace Rivet {
       // _histograms["NSubJettiness"]	= bookHisto1D("NSubJettiness" , 40, -0.005, 1.005);
       // _histograms["NSubJettiness1Iter"]	= bookHisto1D("NSubJettiness1Iter" , 40, -0.005, 1.005);
       // _histograms["NSubJettiness2Iter"]	= bookHisto1D("NSubJettiness2Iter" , 40, -0.005, 1.005);
-      _histograms["JetPullTheta"]       = bookHisto1D("JetPullTheta" ,50,-PI,PI);
-      _histograms["JetPullMag"]         = bookHisto1D("JetPullMag" ,50,0,0.06);
 
+
+      _histograms["ConeJetPullTheta"]       = bookHisto1D("JetPullTheta" ,50,-PI,PI);
+      _histograms["ConeJetPullMag"]         = bookHisto1D("ConeJetPullMag" ,50,0,0.06);
+
+      _histograms["CJPThetaPsi"]       = bookHisto1D("CJPThetaPsi" ,50,-PI,PI);
+      _histograms["CJPThetaPtn"]       = bookHisto1D("CJPThetaPtn" ,50,-PI,PI);
 
       char histName[25];
       for(int i=0; i < nPtBins; i++) {
@@ -126,7 +106,6 @@ namespace Rivet {
 	vetoEvent;
       }
       cutFlow["Leptons"]++;
-
       Particles muons;
       foreach(const Particle& lepton,lProj.chargedLeptons()){
 	if(abs(lepton.pid())==13){
@@ -156,7 +135,7 @@ namespace Rivet {
       }
 
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
-      const Jets jets = jetProj.jetsByPt(45*GeV);
+      const PseudoJets jets = jetProj.pseudoJetsByPt(45*GeV);
       if(jets.empty()){
 	vetoEvent;
       }
@@ -181,18 +160,6 @@ namespace Rivet {
       }
       cutFlow["ConeJetRad"]++;
       fastjet::PseudoJet& ConeJet = ConeJets[0];
-      _histograms["ConeJetPt"]->fill(ConeJet.pt());
-      _histograms["ConeJetEta"]->fill(ConeJet.eta());
-      //dump4vec(ConeJet);
-      //FIXME The mass is negative!
-      _histograms["ConeJetM"]->fill(fabs(ConeJet.m()));
-      
-      _histograms["Dipolarity"]->fill(Dipolarity(ConeJet),weight);
-      const std::pair<double,double> tvec=JetPull(cs,ConeJet);
-      _histograms["JetPullMag"]->fill(tvec.first,weight);
-      if(tvec.first > 0) {
-	_histograms["JetPullTheta"]->fill(tvec.second,weight);
-      }
       // _histograms["JetMassFilt"]->fill(Filter(cs,ConeJet, FastJets::CAM, 3, 0.3).m(), weight);
       // _histograms["JetMassTrim"]->fill(Trimmer(cs,ConeJet, FastJets::CAM, 0.03, 0.3).m(), weight);
       // _histograms["JetMassPrune"]->fill(Pruner(cs,ConeJet, FastJets::CAM, 0.4, 0.1).m(), weight);
@@ -211,58 +178,32 @@ namespace Rivet {
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
       _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
       _histograms["JPsiM"]->fill(j_psi.mass(),weight);
-
-      Jet charmJet;
+      
+      fastjet::PseudoJet charmJet;
       double delR(99.);
       double candDelR(99.);
-      foreach(const Jet& j, jets){
-	delR=deltaR(j.momentum(), j_psi);
+      foreach(const fastjet::PseudoJet& j, jets){
+	delR=deltaR(FourMomentum(j.e(),j.px(),j.py(),j.pz()), j_psi);
       	if( delR < jetR && delR < candDelR) {
       	  charmJet=j;
 	  candDelR=delR;
       	}
       }
-      if(isinf(deltaR(charmJet,j_psi))){
+      if(isinf(deltaR(FourMomentum(charmJet.e(),
+				   charmJet.px(),
+				   charmJet.py(),
+				   charmJet.pz()),j_psi))){
 	vetoEvent;
       }
       cutFlow["charmJetMatch"]++;
-
-      _histograms["DeltaR"]->fill(deltaR(j_psi,charmJet),weight);
-      _histograms["JetPt"]->fill(charmJet.pt(),weight);
-      _histograms["JetM"]->fill(charmJet.mass(),weight);
-      _histograms["JetEta"]->fill(charmJet.eta(),weight);
-
-      _histograms["JPsiDeltaR"]->fill(deltaR(j_psi,FourMomentum(ConeJet.e(),
-								ConeJet.px(),
-								ConeJet.py(),
-								ConeJet.pz())),weight);
-
-      //calculate substructure variables
-      const double z(charmJet.pt() > 0 ? j_psi.pt()/charmJet.pt() : -1.);
-      const double z_jpsi(ConeJet.pt() > 0 ? j_psi.pt()/ConeJet.pt() : -1.);
-      //fill substructure histos
-      _histograms["JetZ"]->fill(z,weight);
-      _histograms["ConeJetZ"]->fill(z_jpsi,weight);
-      fillJetZ("Jet",3,z,charmJet.pt(),weight);
-      fillJetZ("Jet",5,z,charmJet.pt(),weight);
-      fillJetZ("Jet",8,z,charmJet.pt(),weight);
-
-      fillJetZ("ConeJet",3,z_jpsi,ConeJet.pt(),weight);
-      fillJetZ("ConeJet",5,z_jpsi,ConeJet.pt(),weight);
-      fillJetZ("ConeJet",8,z_jpsi,ConeJet.pt(),weight);
-      
-      char histName[25];
-      for(int i=0; i < nPtBins; i++ ){
-      	if(inRange(charmJet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
-      	  sprintf(histName,"JetZ_pt%d_%d",binWidth*i,binWidth*(i+1));
-      	  _histograms[histName]->fill(z,weight);
-      	}
-      	if(inRange(ConeJet.pt(),double(1.8*binWidth*i),double(1.8*binWidth*(i+1)))){
-      	  sprintf(histName,"ConeJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
-      	  _histograms[histName]->fill(z,weight);
-      	}
+      fastjet::PseudoJet parton=jets[0];
+      if(parton.m2()==charmJet.m2()){
+	parton=jets[1];
       }
+      fillJetHistos("ConeJet",ConeJet,parton,j_psi,cs,weight); 
+      fillJetHistos("Jet",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
     }
+
 
     /// Finalize
     void finalize() {
@@ -284,6 +225,73 @@ namespace Rivet {
       snprintf(histName,25,"%sPtZ%d",key,zVal);
       if(fuzzyEquals(z,zVal*0.1,0.1)){
 	_histograms[histName]->fill(pt,weight);
+      }
+    }
+    void bookJetHistos(const string& key){
+      _histograms[key+"Pt"] = bookHisto1D(key+"Pt" , 50, 0, 250);
+      _histograms[key+"M"] = bookHisto1D(key+"M" , 50, 0, 100);
+      _histograms[key+"Eta"] = bookHisto1D(key+"Eta" , 25, -3, 3);
+
+      _histograms[key+"PtZ3"] = bookHisto1D(key+"PtZ3" , 50, 0, 250);
+      _histograms[key+"PtZ5"] = bookHisto1D(key+"PtZ5" , 50, 0, 250);
+      _histograms[key+"PtZ8"] = bookHisto1D(key+"PtZ8" , 50, 0, 250);
+
+      _histograms[key+"DeltaR"] = bookHisto1D(key+"DeltaR",50,0,jetR+0.1);
+      _histograms[key+"Z"] = bookHisto1D(key+"Z",50,0,1.10);
+      _histograms[key+"Dipolarity"]         =  bookHisto1D(key+"Dipolarity" ,50,0.0,2);
+
+      _histograms[key+"PTheta"]       = bookHisto1D(key+"PTheta" ,50,-PI,PI);
+      _histograms[key+"PMag"]         = bookHisto1D(key+"PMag" ,50,0,0.06);
+
+      _histograms[key+"PThetaJPsi"]       = bookHisto1D(key+"PThetaJPsi" ,50,-PI,PI);
+      _histograms[key+"PThetaPtn"]       = bookHisto1D(key+"PThetaPtn" ,50,-PI,PI);
+
+      char histName[25];
+      for(int i=0; i < nPtBins; i++) {
+	sprintf(histName,(key+"Z_pt%d_%d").c_str(),binWidth*i,binWidth*(i+1));
+	_histograms[string(histName)] = bookHisto1D(histName,50,0,2.0);
+      }
+    }
+    void fillJetHistos(const string& key, const fastjet::PseudoJet& jet, 
+		       const PseudoJet& parton, const FourMomentum& j_psi,
+		       const fastjet::ClusterSequence& clusterSeq, const double weight){
+      //cache variables for faster access.
+      const double jet_pt(jet.pt());
+      const double z(jet_pt > 0 ? j_psi.pt()/jet_pt : -1. );
+
+      //kinematics
+      _histograms[key+"DeltaR"]->fill(deltaR(j_psi,FourMomentum(jet.e(),jet.px(),jet.py(),jet.pz())),weight);
+      _histograms[key+"Pt"]->fill(jet_pt,weight);
+      _histograms[key+"M"]->fill(jet.m(),weight);
+      _histograms[key+"Eta"]->fill(jet.eta(),weight);
+      
+      //substructure
+      _histograms[key+"Z"]->fill(z,weight);
+      fillJetZ(key.c_str(),3,z,jet_pt,weight);
+      fillJetZ(key.c_str(),5,z,jet_pt,weight);
+      fillJetZ(key.c_str(),8,z,jet_pt,weight);
+      
+      std::vector<double> pull=JetPull(clusterSeq, jet);
+      _histograms[key+"PTheta"]->fill(pull[1],weight);
+      _histograms[key+"PMag"]->fill(pull[0],weight);
+      pull=JetPull(clusterSeq, j_psi);
+      _histograms[key+"PThetaJPsi"]->fill(pull[1],weight);
+      pull=JetPull(clusterSeq, parton);
+      _histograms[key+"PThetaPtn"]->fill(pull[1],weight);
+
+      _histograms[key+"Dipolarity"]->fill(Dipolarity(jet),weight);
+      char histName[25];
+      for(int i=0; i < nPtBins; i++ ){
+      	if(inRange(jet.pt(),double(binWidth*i),double(binWidth*(i+1)))){
+      	  sprintf(histName,(key+"Z_pt%d_%d").c_str(),binWidth*i,binWidth*(i+1));
+      	  _histograms[histName]->fill(z,weight);
+      	}
+	/*
+      	if(inRange(ConeJet.pt(),double(1.8*binWidth*i),double(1.8*binWidth*(i+1)))){
+      	  sprintf(histName,"ConeJetZ_pt%d_%d",int(1.8*binWidth*i),int(1.8*binWidth*(i+1)));
+      	  _histograms[histName]->fill(z,weight);
+      	}
+	*/
       }
     }
     double jetR;

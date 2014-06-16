@@ -28,7 +28,7 @@ namespace Rivet{
   /// Calculate Dipolarity of Jet
   double Dipolarity(const fastjet::PseudoJet &j);
   // Calculate Pull of Jet
-  std::pair<double,double> JetPull(const fastjet::ClusterSequence& clusterSeq,const fastjet::PseudoJet &j, const double ptmin=-1*GeV);
+  std::vector<double> JetPull(const fastjet::ClusterSequence& clusterSeq, const fastjet::PseudoJet &j, const double ptmin=-1*GeV);
   /// Calculate JetCharge
   double JetCharge(const Jet& jet, const fastjet::PseudoJet &j, const double k, const double ptmin=-1.);
 

@@ -40,7 +40,7 @@ namespace Rivet {
   }
 
   ///\vec{t} ===\Sum_{i\in J} |r_i|p_{Ti}/p_{TJ}\vec{r_i}
-  std::pair<double,double> JetPull(const fastjet::ClusterSequence& clusterSeq, const fastjet::PseudoJet &j, const double ptmin) {
+  std::vector<double> JetPull(const fastjet::ClusterSequence& clusterSeq, const fastjet::PseudoJet &j, const double ptmin) {
     //assert(clusterSeq());
     const PseudoJets parts = clusterSeq.constituents(j);
     const double jetRap = j.rapidity(), jetPhi = j.phi();
@@ -64,7 +64,10 @@ namespace Rivet {
 	tmag=-1.0;
       }
     }
-    return std::pair<double,double>(tmag,ttheta);
+    std::vector<double> pull;
+    pull.push_back(tmag);
+    pull.push_back(ttheta);
+    return pull;
   }
 
   ///Q===\Sum_{i\in J} q_i*p_{Ti}^k/p_{TJ}
