@@ -40,33 +40,42 @@ namespace Rivet {
   }
 
   ///\vec{t} ===\Sum_{i\in J} |r_i|p_{Ti}/p_{TJ}\vec{r_i}
-  std::vector<double> JetPull(const fastjet::ClusterSequence& clusterSeq, const fastjet::PseudoJet &j, const double ptmin) {
-    //assert(clusterSeq());
-    const PseudoJets parts = clusterSeq.constituents(j);
-    const double jetRap = j.rapidity(), jetPhi = j.phi();
+  std::vector<double> JetPull(const fastjet::PseudoJet &jet, 
+			      const double ptmin) {
+    return JetPull(jet,jet,ptmin);
+  }
+  std::vector<double> JetPull(const fastjet::PseudoJet &j1, 
+			      const fastjet::PseudoJet &j2,
+			      const double ptmin) {
+    std::vector<double> pull(2,0.);
+    if(!j1.has_valid_cluster_sequence()){
+      return pull;
+    }
+    const PseudoJets parts = j1.constituents();
+    const double jetRap = j2.rapidity(), jetPhi = j2.phi();
     double ty=0, tphi=0, tmag=0, ttheta=0, dphi=0;
     if(parts.size() > 1) {
       foreach (const fastjet::PseudoJet& p, parts) {
 	//don't generate a large pull for jets at 2pi
 	dphi = mapAngleMPiToPi(p.phi()-jetPhi); 
 	if(p.pt() > ptmin) { 
-	  double ptTimesRmag=sqrt(pow(p.rapidity()-jetRap,2) + pow(dphi,2))*p.pt();//use dphi
+	  double ptTimesRmag=sqrt(pow(p.rapidity()-jetRap,2) + pow(dphi,2))*p.pt();
 	  ty+=ptTimesRmag*(p.rapidity()-jetRap);
-	  tphi+=ptTimesRmag*(dphi);//use dphi
+	  tphi+=ptTimesRmag*(dphi);
 	}
       }
       //now parametrize \vec{t}=|t|(cos(\theta_t),sin(\theta_t))
-      tmag=sqrt(pow(ty,2) + pow(tphi,2))/j.pt();
+      tmag=sqrt(pow(ty,2) + pow(tphi,2))/j2.pt();
       if(tmag>0) {
 	ttheta=atan2(tphi,ty);
       }
+      // What is this?!
       if(tmag > 0.08 ) {
 	tmag=-1.0;
       }
     }
-    std::vector<double> pull;
-    pull.push_back(tmag);
-    pull.push_back(ttheta);
+    pull[0]=tmag;
+    pull[1]=ttheta;
     return pull;
   }
 
