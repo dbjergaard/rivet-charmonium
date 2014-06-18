@@ -6,8 +6,8 @@ rivet.util.check_python_version()
 rivet.util.set_process_name(os.path.basename(__file__))
 
 parser = OptionParser(usage='Usage: %prog [options] yodafile1 yodafile2 ...')
-# parser.add_option('-o','--outTarball',   dest='outTarBall',
-#                   help='name of tarball outputted by prun',metavar='TARBALL')
+parser.add_option('-k','--key',   dest='nameKey',
+                  help='Prefix for retrieving histograms of the form keyZ_ptLow_High',metavar='TARBALL')
 (options, args)=parser.parse_args()
 
 # ripped off of rivet-cmphistos 
@@ -17,18 +17,20 @@ def getPtHistos(filelist,key):
         histos.setdefault(yFile,{})
         objs = yoda.readYODA(yFile)
         for path, obj in objs.iteritems():
-            if (not histos[yFile].has_key(path)) and (key+'_pt' in path):
+            if (not histos[yFile].has_key(path)) and (key+'Z_pt' in path):
                 histos[yFile][path] = obj
     return histos
 nPtBins=10
 binWidth=25 
-def writeCoords(histos, fName):
-    name='/MC_GENSTUDY_CHARMONIUM/JetZ_pt%d_%d'
+if options.nameKey=='ConeJet':
+    binWidth=45
+def writeCoords(histos, fName,key):
+    name='/MC_GENSTUDY_CHARMONIUM/%sZ_pt%d_%d'
     datFile=open(fName.split('.')[0]+'.txt','w')
     datFile.write("#+BEGIN_PLOT %s\n"%(fName.split('.')[0],))
     datFile.write("# X\tY\t\tY_err\n")
     for i in range(0,nPtBins):
-        hist=histos[name%(binWidth*i,binWidth*(i+1))]
+        hist=histos[name%(key,binWidth*i,binWidth*(i+1))]
         if hist.sumW()!=0:
             yErr=0.
             if(hist.numEntries() > 1):
@@ -52,9 +54,12 @@ def printGnuPlot(outBName,plots):
     outFile.write('set output \'%s.tex\'\n\n'%(outBName,))
     outFile.write('set key bottom left\n')
     outFile.write('set key spacing 2.25\n')
-    outFile.write('set title "Charmed jet p$_{T}$ vs $\\\\langle z \\\\rangle$"\n')
+    sampleName='Anti-k$_{t}$'
+    if 'ConeJet' in outBName:
+        sampleName='CA Cone'
+    outFile.write('set title "%s jet p$_{T}$ vs $\\\\langle z \\\\rangle$"\n'%sampleName)
     outFile.write('set ylabel "$\\\\langle z \\\\rangle$"\n')
-    outFile.write('set xlabel "Jet $p_T$"\n')
+    outFile.write('set xlabel "$p_T$"\n')
     outFile.write('set xrange[0:%d]\n'%(nPtBins*binWidth))
     outFile.write('set yrange[0:1.10]\n')
     # from colorbrew2.org, not color blind safe, not print safe, not
@@ -78,10 +83,13 @@ def main():
     if(len(args)==0):
         parser.print_help()
         return 1
-    histos = getPtHistos(args,'JetZ')
+    key=options.nameKey
+    if key == None:
+        key='Jet'
+    histos=getPtHistos(args,key)
     for yFile in histos:
-        writeCoords(histos[yFile],yFile)
-    printGnuPlot('JetZvsPtProfile',histos)
+        writeCoords(histos[yFile],yFile,key)
+    printGnuPlot(key+'ZvsPtProfile',histos)
     return 0
 if __name__ == '__main__':
     sys.exit(main())
