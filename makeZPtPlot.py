@@ -6,8 +6,8 @@ rivet.util.check_python_version()
 rivet.util.set_process_name(os.path.basename(__file__))
 
 parser = OptionParser(usage='Usage: %prog [options] yodafile1 yodafile2 ...')
-# parser.add_option('-o','--outTarball',   dest='outTarBall',
-#                   help='name of tarball outputted by prun',metavar='TARBALL')
+parser.add_option('-k','--key',   dest='nameKey',
+                  help='Prefix for retrieving histograms of the form keyZ_ptLow_High',metavar='TARBALL')
 (options, args)=parser.parse_args()
 
 # ripped off of rivet-cmphistos 
@@ -17,25 +17,13 @@ def getPtHistos(filelist,key):
         histos.setdefault(yFile,{})
         objs = yoda.readYODA(yFile)
         for path, obj in objs.iteritems():
-            if (not histos[yFile].has_key(path)) and (key+'_pt' in path):
+            if (not histos[yFile].has_key(path)) and (key+'Z_pt' in path):
                 histos[yFile][path] = obj
     return histos
 nPtBins=10
-binWidth=25 
-def writeCoords(histos, fName):
-    name='/MC_GENSTUDY_CHARMONIUM/JetZ_pt%d_%d'
-    #datFile=open(fName.split('.')[0]+'.txt','w')
-    sys.stdout.write("#+BEGIN_PLOT %s\n"%(fName.split('.')[0],))
-    sys.stdout.write("# X\tY\t\tY_err\n")
-    for i in range(0,nPtBins):
-        hist=histos[name%(binWidth*i,binWidth*(i+1))]
-        if hist.sumW()!=0:
-            yErr=0.
-            if(hist.numEntries() > 1):
-                yErr=hist.stdDev()
-            sys.stdout.write("%.5g\t%.7g\t%.7g\n"%(binWidth*(i+0.5), hist.mean(),yErr))
-    sys.stdout.write("#+END_PLOT\n")
-    #datFile.close()
+binWidth=25
+if options.nameKey=='ConeJet':
+    binWidth=45
 # from colorbrewer2.org
 color_palettes={"blue":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6dbef","#eff3ff"],
                 "red":["#99000d","#cb181d","#ef3b2c","#fb6a4a","#fc9272","#fcbba1","#fee5d9"],
@@ -43,7 +31,7 @@ color_palettes={"blue":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6db
                 "purple":["#4a1486","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#f2f0f7"],
                 "orange":["#8c2d04","#d94801","#f16913","#fd8d3c","#fdae6b","#fdd0a2","#feedde"],
                 "black":["#252525","#525252","#737373","#969696","#bdbdbd","#d9d9d9","#f7f7f7"]}
-def writeGnuPlot(outBName):
+def writeGnuPlot(outBName,key):
     outFile=open(outBName+'.gnu','w')
     outFile.write('set term tikz standalone color solid size 5in,3in\n')
     outFile.write('set output \'%s.tex\'\n\n'%(outBName,))
@@ -55,9 +43,12 @@ def writeGnuPlot(outBName):
     outFile.write('set nocbtics\n')
     outFile.write('set rtics axis in scale 0,0 nomirror norotate  offset character 0, 0, 0 autojustify\n')
     
-    outFile.write('set title "Charmed jet p$_{T}$ vs z"\n')
+    sampleName='Anti-k$_{t}$'
+    if key=='ConeJet':
+        sampleName='CA Cone'
+    outFile.write('set title "%s jet p$_{T}$ vs z"\n'%(sampleName))
     outFile.write('set ylabel "$z$"\n')
-    outFile.write('set xlabel "Jet $p_T$"\n')
+    outFile.write('set xlabel " $p_T$"\n')
     outFile.write('set xrange[0:%d]\n'%(nPtBins*binWidth))
     outFile.write('set yrange[0:1.10]\n')
     outFile.write('set cblabel "Entries"\n')
@@ -78,21 +69,25 @@ def dumpCoords(hist,xval,outFile):
         outFile.write('%.3g\t%.3g\t%.3g\n'%(xval, bin.midpoint, bin.height))
 def write2DHist(key,histos):
     for fName in histos:
-        outName=key+'vsPt'+fName.split('.')[0]+'Plot.txt'
-        outFile=open(outName,'w');
-        name='/MC_GENSTUDY_CHARMONIUM/JetZ_pt%d_%d'
+        outName=key+'ZvsPt'+fName.split('.')[0]+'Plot.txt'
+        outFile=open(outName,'w')
+        name='/MC_GENSTUDY_CHARMONIUM/%sZ_pt%d_%d'
         for i in range(0,nPtBins):
-            hist=histos[fName][name%(binWidth*i,binWidth*(i+1))]
+            hist=histos[fName][name%(key,binWidth*i,binWidth*(i+1))]
             dumpCoords(hist,binWidth*(i+0.5),outFile)
             outFile.write('\n')
         outFile.close()
-        writeGnuPlot(outName.split('.')[0])
+        writeGnuPlot(outName.split('.')[0],key)
 
 def main():
     if(len(args)==0):
         parser.print_help()
         return 1
-    histos=getPtHistos(args,'JetZ')
-    write2DHist('JetZ', histos)
+    key=options.nameKey
+    if key == None:
+        key='Jet'
+    histos=getPtHistos(args,key)
+    write2DHist(key, histos)
+    return 0
 if __name__ == '__main__':
     sys.exit(main())

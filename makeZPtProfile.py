@@ -11,13 +11,13 @@ parser = OptionParser(usage='Usage: %prog [options] yodafile1 yodafile2 ...')
 (options, args)=parser.parse_args()
 
 # ripped off of rivet-cmphistos 
-def getPtHistos(filelist):
+def getPtHistos(filelist,key):
     histos = {}
     for yFile in filelist:
         histos.setdefault(yFile,{})
         objs = yoda.readYODA(yFile)
         for path, obj in objs.iteritems():
-            if (not histos[yFile].has_key(path)) and ('_pt' in path):
+            if (not histos[yFile].has_key(path)) and (key+'_pt' in path):
                 histos[yFile][path] = obj
     return histos
 nPtBins=10
@@ -78,10 +78,10 @@ def main():
     if(len(args)==0):
         parser.print_help()
         return 1
-    histos = getPtHistos(args)
+    histos = getPtHistos(args,'JetZ')
     for yFile in histos:
         writeCoords(histos[yFile],yFile)
     printGnuPlot('JetZvsPtProfile',histos)
-
+    return 0
 if __name__ == '__main__':
     sys.exit(main())

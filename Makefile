@@ -26,6 +26,7 @@ plotBook.pdf: plots
 	pdftk $(PLOTFILES) JetZvsPtProfile.pdf plots/*.pdf cat output plotBook.pdf
 %.pdf: %.tex
 	pdflatex $<
+	rm $(patsubst tex,log,$<) $(patsubst tex,aux,$<) $(patsubst tex,txt,$<)
 %.tex: %.gnu
 	gnuplot $<
 rivet-plots: dat-files
