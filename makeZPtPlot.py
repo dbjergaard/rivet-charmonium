@@ -31,10 +31,21 @@ color_palettes={"blue":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6db
                 "purple":["#4a1486","#6a51a3","#807dba","#9e9ac8","#bcbddc","#dadaeb","#f2f0f7"],
                 "orange":["#8c2d04","#d94801","#f16913","#fd8d3c","#fdae6b","#fdd0a2","#feedde"],
                 "black":["#252525","#525252","#737373","#969696","#bdbdbd","#d9d9d9","#f7f7f7"]}
+def getTitle(fileName):
+    titles={'1S0_8.yoda':['1S$_0^{(8)}$','blue'], '3PJ_8.yoda':['3P$_J^{(8)}$','blue'],
+            '3S1_8.yoda':['3S$_1^{(8)}$','blue'], '3PJ_1.yoda':['3P$_J^{(1)}$','red'],
+            '3S1_1.yoda':['3S$_1^{(1)}$','blue']}
+    title=[fileName.split('.')[0],'red']
+    try:
+        title=titles[fileName]
+    except KeyError:
+        pass
+    return title
 def writeGnuPlot(outBName,key):
-    outFile=open(outBName+'.gnu','w')
+    outName=key+'ZvsPt'+outBName+'Plot.gnu'
+    outFile=open(outName,'w')
     outFile.write('set term tikz standalone color solid size 5in,3in\n')
-    outFile.write('set output \'%s.tex\'\n\n'%(outBName,))
+    outFile.write('set output \'%s.tex\'\n\n'%(outName.split('.')[0],))
     outFile.write('unset key\n')
     outFile.write('set view map\n')
     outFile.write('set xtics border in scale 0,0 mirror norotate  offset character 0, 0, 0 autojustify\n')
@@ -42,21 +53,21 @@ def writeGnuPlot(outBName,key):
     outFile.write('set ztics border in scale 0,0 nomirror norotate  offset character 0, 0, 0 autojustify\n')
     outFile.write('set nocbtics\n')
     outFile.write('set rtics axis in scale 0,0 nomirror norotate  offset character 0, 0, 0 autojustify\n')
-    
     sampleName='Anti-k$_{t}$'
     if key=='ConeJet':
         sampleName='CA Cone'
-    outFile.write('set title "%s jet p$_{T}$ vs z"\n'%(sampleName))
+    title,color=getTitle(outBName+'.yoda')
+    outFile.write('set title "%s jet p$_{T}$ vs z %s"\n'%(sampleName,title))
     outFile.write('set ylabel "$z$"\n')
     outFile.write('set xlabel " $p_T$"\n')
     outFile.write('set xrange[0:%d]\n'%(nPtBins*binWidth))
     outFile.write('set yrange[0:1.10]\n')
     outFile.write('set cblabel "Entries"\n')
-    writeColorPalette(color_palettes['red'],outFile)
+    writeColorPalette(color_palettes[color],outFile)
     # outFile.write('set palette rgbformulae -7, 2, -7\n')
     outFile.write('plot ')
     plotLine="'%s' with image"
-    outFile.write(plotLine%(outBName+'.txt',)+'\n')
+    outFile.write(plotLine%(outName.split('.')[0]+'.txt',)+'\n')
     outFile.close()
 def writeColorPalette(palette,outFile):
     outFile.write('set palette negative defined (')
@@ -77,7 +88,7 @@ def write2DHist(key,histos):
             dumpCoords(hist,binWidth*(i+0.5),outFile)
             outFile.write('\n')
         outFile.close()
-        writeGnuPlot(outName.split('.')[0],key)
+        writeGnuPlot(fName.split('.')[0],key)
 
 def main():
     if(len(args)==0):
