@@ -47,7 +47,7 @@ namespace Rivet {
   std::vector<double> JetPull(const fastjet::PseudoJet &j1, 
 			      const fastjet::PseudoJet &j2,
 			      const double ptmin) {
-    std::vector<double> pull(2,0.);
+    std::vector<double> pull(2,-99.);
     if(!j1.has_valid_cluster_sequence()){
       return pull;
     }
@@ -68,10 +68,6 @@ namespace Rivet {
       tmag=sqrt(pow(ty,2) + pow(tphi,2))/j2.pt();
       if(tmag>0) {
 	ttheta=atan2(tphi,ty);
-      }
-      // What is this?!
-      if(tmag > 0.08 ) {
-	tmag=-1.0;
       }
     }
     pull[0]=tmag;

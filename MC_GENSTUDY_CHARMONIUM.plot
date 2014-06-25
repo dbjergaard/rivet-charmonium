@@ -83,6 +83,41 @@ LogY=1
 XLabel=$ed$
 # END PLOT
 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau1$
+Title= 1-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{1}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau2$
+Title= 2-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{2}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau3$
+Title= 3-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{3}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau12$
+Title= Ratio of $\tau_1/\tau_2$ of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_1/\tau_2$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau23$
+Title= Ratio of $\tau_2/\tau_3$ of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_2/\tau_3$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPtclMult$
+Title=Number of Particles in Anti-k$_{T}$ jet
+XLabel=N
+# END PLOT
+
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPTheta$
 Title=  Anti-k$_{T}$ Jet Pull $\theta_t$ 
 XLabel=$\theta_t$
@@ -156,6 +191,41 @@ XLabel=$\Delta$ R
 Title= Dipolarity of CA Cone Jet
 LogY=1
 XLabel=$ed$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau1$
+Title= 1-subjettiness of CA Cone Jet
+LogY=1
+XLabel=$\tau_{1}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau2$
+Title= 2-subjettiness of CA Cone Jet
+LogY=1
+XLabel=$\tau_{2}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau3$
+Title= 3-subjettiness of CA Cone Jet
+LogY=1
+XLabel=$\tau_{3}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau12$
+Title= Ratio of $\tau_1/\tau_2$ of CA Cone Jet
+LogY=1
+XLabel=$\tau_1/\tau_2$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau23$
+Title= Ratio of $\tau_2/\tau_3$ of CA Cone Jet
+LogY=1
+XLabel=$\tau_2/\tau_3$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtclMult$
+Title=Number of Particles in CA Cone Jet
+XLabel=N
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPTheta$
