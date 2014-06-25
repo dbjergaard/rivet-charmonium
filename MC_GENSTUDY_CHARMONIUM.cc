@@ -198,34 +198,38 @@ namespace Rivet {
     }
     void bookJetHistos(const string& key){
       const double ptMax = (key=="Jet") ? 250. : 450; 
-      _histograms[key+"Pt"] = bookHisto1D(key+"Pt" , 50, 0, ptMax);
-      _histograms[key+"M"] = bookHisto1D(key+"M" , 50, 0, 40);
-      _histograms[key+"Eta"] = bookHisto1D(key+"Eta" , 25, -4.2, 4.2);
+      _histograms[key+"Pt"]		 = bookHisto1D(key+"Pt" , 50, 0, ptMax);
+      _histograms[key+"M"]		 = bookHisto1D(key+"M" , 50, 0, 40);
+      _histograms[key+"Eta"]		 = bookHisto1D(key+"Eta" , 25, -4.2, 4.2);
 
-      _histograms[key+"PtZ3"] = bookHisto1D(key+"PtZ3" , 50, 0, ptMax);
-      _histograms[key+"PtZ5"] = bookHisto1D(key+"PtZ5" , 50, 0, ptMax);
-      _histograms[key+"PtZ8"] = bookHisto1D(key+"PtZ8" , 50, 0, ptMax);
+      _histograms[key+"PtZ3"]		 = bookHisto1D(key+"PtZ3" , 50, 0, ptMax);
+      _histograms[key+"PtZ5"]		 = bookHisto1D(key+"PtZ5" , 50, 0, ptMax);
+      _histograms[key+"PtZ8"]		 = bookHisto1D(key+"PtZ8" , 50, 0, ptMax);
 
-      _histograms[key+"DeltaR"] = bookHisto1D(key+"DeltaR",50,0,jetR+0.1);
-      _histograms[key+"Z"] = bookHisto1D(key+"Z",50,0,1.10);
-      _histograms[key+"Dipolarity"]         =  bookHisto1D(key+"Dipolarity" ,50,0.0,2);
+      _histograms[key+"DeltaR"]		 = bookHisto1D(key+"DeltaR",50,0,jetR+0.1);
+      _histograms[key+"Z"]		 = bookHisto1D(key+"Z",50,0,1.10);
+      _histograms[key+"Dipolarity"]      = bookHisto1D(key+"Dipolarity" ,50,0.0,2);
 
-      _histograms[key+"PTheta"]       = bookHisto1D(key+"PTheta" ,50,-PI,PI);
-      _histograms[key+"PMag"]         = bookHisto1D(key+"PMag" ,50,0,0.06);
+      //Jet Pull to various axes
+      _histograms[key+"PMag"]		 = bookHisto1D(key+"PMag" ,50,0,0.06);
+      _histograms[key+"PTheta"]		 = bookHisto1D(key+"PTheta" ,50,-PI,PI);
 
-      _histograms[key+"PThetaJPsi"]       = bookHisto1D(key+"PThetaJPsi" ,50,-PI,PI);
+      _histograms[key+"PMagJPsi"]	 = bookHisto1D(key+"PMagJPsi" ,50,0,0.06);
+      _histograms[key+"PThetaJPsi"]      = bookHisto1D(key+"PThetaJPsi" ,50,-PI,PI);
+
+      _histograms[key+"PMagPtn"]	 = bookHisto1D(key+"PMagPtn" ,50,0,0.06);
       _histograms[key+"PThetaPtn"]       = bookHisto1D(key+"PThetaPtn" ,50,-PI,PI);
 
-      _histograms[key+"PtclMult"] = bookHisto1D(key+"PtclMult",51,-0.5,50.5);
+      _histograms[key+"PtclMult"]	 = bookHisto1D(key+"PtclMult",51,-0.5,50.5);
+      // N sub-jettiness
+      _histograms[key+"NSJTau1"]	 = bookHisto1D(key+"NSJTau1", 40, -0.005, 1.005);
+      _histograms[key+"NSJTau2"]	 = bookHisto1D(key+"NSJTau2", 40, -0.005, 1.005);
+      _histograms[key+"NSJTau3"]	 = bookHisto1D(key+"NSJTau3", 40, -0.005, 1.005);
+
+      _histograms[key+"NSJTau12"]	 = bookHisto1D(key+"NSJTau12", 40, -0.005, 1.005);
+      _histograms[key+"NSJTau23"]	 = bookHisto1D(key+"NSJTau23", 40, -0.005, 1.005);
+
       char histName[25];
-      
-      _histograms[key+"NSJTau1"] = bookHisto1D(key+"NSJTau1", 40, -0.005, 1.005);
-      _histograms[key+"NSJTau2"] = bookHisto1D(key+"NSJTau2", 40, -0.005, 1.005);
-      _histograms[key+"NSJTau3"] = bookHisto1D(key+"NSJTau3", 40, -0.005, 1.005);
-
-      _histograms[key+"NSJTau12"] = bookHisto1D(key+"NSJTau12", 40, -0.005, 1.005);
-      _histograms[key+"NSJTau23"] = bookHisto1D(key+"NSJTau23", 40, -0.005, 1.005);
-
       for(int i=0; i < nPtBins; i++) {
 	//WARNING THIS IS COMPILER DEPENDENT!
 	sprintf(histName,(key+"Z_pt%d_%d").c_str(),int((ptMax/nPtBins)*i),int((ptMax/nPtBins)*(i+1)));
@@ -256,8 +260,10 @@ namespace Rivet {
       _histograms[key+"PMag"]->fill(pull.at(0),weight);
       pull=JetPull(jet, j_psi);
       _histograms[key+"PThetaJPsi"]->fill(pull.at(1),weight);
+      _histograms[key+"PMagJPsi"]->fill(pull.at(0),weight);
       pull=JetPull(jet, parton);
       _histograms[key+"PThetaPtn"]->fill(pull.at(1),weight);
+      _histograms[key+"PMagPtn"]->fill(pull.at(0),weight);
 
       _histograms[key+"Dipolarity"]->fill(Dipolarity(jet),weight);
       vector<double> tau_vals(3,-1.);
