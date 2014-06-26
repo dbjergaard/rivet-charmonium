@@ -220,14 +220,14 @@ namespace Rivet {
       _histograms[key+"PMagPtn"]	 = bookHisto1D(key+"PMagPtn" ,50,0,0.06);
       _histograms[key+"PThetaPtn"]       = bookHisto1D(key+"PThetaPtn" ,50,-PI,PI);
 
-      _histograms[key+"PtclMult"]	 = bookHisto1D(key+"PtclMult",51,-0.5,50.5);
+      _histograms[key+"PtclMult"]	 = bookHisto1D(key+"PtclMult",41,-0.5,40.5);
       // N sub-jettiness
       _histograms[key+"NSJTau1"]	 = bookHisto1D(key+"NSJTau1", 40, -0.005, 1.005);
       _histograms[key+"NSJTau2"]	 = bookHisto1D(key+"NSJTau2", 40, -0.005, 1.005);
       _histograms[key+"NSJTau3"]	 = bookHisto1D(key+"NSJTau3", 40, -0.005, 1.005);
 
-      _histograms[key+"NSJTau12"]	 = bookHisto1D(key+"NSJTau12", 40, -0.005, 1.005);
-      _histograms[key+"NSJTau23"]	 = bookHisto1D(key+"NSJTau23", 40, -0.005, 1.005);
+      _histograms[key+"NSJTau12"]	 = bookHisto1D(key+"NSJTau12", 40, -0.005, 2.505);
+      _histograms[key+"NSJTau23"]	 = bookHisto1D(key+"NSJTau23", 40, -0.005, 2.505);
 
       char histName[25];
       for(int i=0; i < nPtBins; i++) {

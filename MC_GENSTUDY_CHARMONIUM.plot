@@ -124,9 +124,21 @@ XLabel=$\theta_t$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPMag$
-Title=  Anti-k$_{T}$ Jet Pull Magnitude $|t|$ 
+Title=  Anti-k$_{T}$ Jet Pull Magnitude $|\vec{t}|$ 
 LogY=1
-XLabel=$|t|$
+XLabel=$|\vec{t}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPMagPtn$
+Title=  Anti-k$_{T}$ Jet Pull Magnitude $|\vec{t}_{Ptn}|$ 
+LogY=1
+XLabel=$|\vec{t}_{Ptn}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPMagJPsi$
+Title=  Anti-k$_{T}$ Jet Pull Magnitude $|\vec{t}_{J/\psi}|$ 
+LogY=1
+XLabel=$|\vec{t}_{J/\psi}|$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPThetaJPsi$
@@ -234,9 +246,21 @@ XLabel=$\theta_t$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMag$
-Title=  CA Cone Jet Pull Magnitude $|t|$ 
+Title=  CA Cone Jet Pull Magnitude $|\vec{t}|$ 
 LogY=1
-XLabel=$|t|$
+XLabel=$|\vec{t}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMagPtn$
+Title=  CA Cone Jet Pull Magnitude $|\vec{t}_{Ptn}|$ 
+LogY=1
+XLabel=$|\vec{t}_{Ptn}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMagJPsi$
+Title=  CA Cone Jet Pull Magnitude $|\vec{t}_{J/\psi}|$ 
+LogY=1
+XLabel=$|\vec{t}_{J/\psi}|$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPThetaJPsi$
