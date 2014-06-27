@@ -226,8 +226,8 @@ namespace Rivet {
       _histograms[key+"NSJTau2"]	 = bookHisto1D(key+"NSJTau2", 40, -0.005, 1.005);
       _histograms[key+"NSJTau3"]	 = bookHisto1D(key+"NSJTau3", 40, -0.005, 1.005);
 
-      _histograms[key+"NSJTau12"]	 = bookHisto1D(key+"NSJTau12", 40, -0.005, 2.505);
-      _histograms[key+"NSJTau23"]	 = bookHisto1D(key+"NSJTau23", 40, -0.005, 2.505);
+      _histograms[key+"NSJTau21"]	 = bookHisto1D(key+"NSJTau21", 40, -0.005, 2.505);
+      _histograms[key+"NSJTau32"]	 = bookHisto1D(key+"NSJTau32", 40, -0.005, 2.505);
 
       char histName[25];
       for(int i=0; i < nPtBins; i++) {
@@ -274,10 +274,10 @@ namespace Rivet {
 	snprintf(histName,25,"%sNSJTau%d",key.c_str(),i);
 	_histograms[histName]->fill(tau_vals[i-1],weight);
       }
-      _histograms[key+"NSJTau12"]->fill(tau_vals[1] != 0 ? 
-					tau_vals[0]/tau_vals[1] : -1,weight);
-      _histograms[key+"NSJTau23"]->fill(tau_vals[2] != 0 ? 
-					tau_vals[1]/tau_vals[2] : -1,weight);
+      _histograms[key+"NSJTau21"]->fill(tau_vals[1] != 0 ? 
+					tau_vals[1]/tau_vals[0] : -1,weight);
+      _histograms[key+"NSJTau32"]->fill(tau_vals[1] != 0 ? 
+					tau_vals[2]/tau_vals[1] : -1,weight);
       
       const double ptMax = (key=="Jet") ? 250. : 450; 
       for(int i=0; i < nPtBins; i++ ){

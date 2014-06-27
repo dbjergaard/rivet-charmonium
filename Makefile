@@ -8,6 +8,7 @@ LDFLAGS:=$(shell rivet-config --ldflags)
 WFLAGS= -Wall -Wno-long-long -Wno-format #-Werror=uninitialized -Werror=delete-non-virtual-dtor  -Wno-unused-local-typedefs
 CFLAGS= -g3 -fno-inline -I$(INCDIR) $(RIVETINCDIR) -pedantic -ansi $(WFLAGS) -O0 -Wl,--no-as-needed -lRivet
 SAMPLES=1S0_8 3PJ_8 3S1_8 3PJ_1 3S1_1
+P6SAMPLES=$(addprefix P6_,$(SAMPLES))
 YODAFILES:=$(addsuffix .yoda,$(SAMPLES))
 JETTYPES=Jet ConeJet
 PLOTFILES:=$(addsuffix Plot.pdf,$(foreach jet,$(JETTYPES),$(addprefix $(jet)ZvsPt,$(SAMPLES)))) $(addsuffix ZvsPtProfile.pdf,$(JETTYPES))

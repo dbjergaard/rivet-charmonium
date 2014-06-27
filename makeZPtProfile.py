@@ -39,9 +39,12 @@ def writeCoords(histos, fName,key):
     datFile.write("#+END_PLOT\n")
     datFile.close()
 def getTitle(fileName):
-    titles={'1S0_8.yoda':'1S$_0^{(8)}$', '3PJ_8.yoda':'3P$_J^{(8)}$',
-            '3S1_8.yoda':'3S$_1^{(8)}$', '3PJ_1.yoda':'3P$_J^{(1)}$',
-            '3S1_1.yoda':'3S$_1^{(1)}$'}
+    titles={'1S0_8.yoda':'Pythia 8 1S$_0^{(8)}$', '3PJ_8.yoda':'Pythia 8 3P$_J^{(8)}$',
+            '3S1_8.yoda':'Pythia 8 3S$_1^{(8)}$', '3PJ_1.yoda':'Pythia 8 3P$_J^{(1)}$',
+            '3S1_1.yoda':'Pythia 8 3S$_1^{(1)}$',
+            'P6_1S0_8.yoda':'Pythia 6 1S$_0^{(8)}$', 'P6_3PJ_8.yoda':'Pythia 6 3P$_J^{(8)}$',
+            'P6_3S1_8.yoda':'Pythia 6 3S$_1^{(8)}$', 'P6_3PJ_1.yoda':'Pythia 6 3P$_J^{(1)}$',
+            'P6_3S1_1.yoda':'Pythia 6 3S$_1^{(1)}$'}
     title=fileName.split('.')[0]
     try:
         title=titles[fileName]
