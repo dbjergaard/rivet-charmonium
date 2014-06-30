@@ -30,7 +30,16 @@ typedef std::map<std::string,Rivet::Histo1DPtr> BookedHistos;
 template <typename lvec> static void dump4vec(lvec four_mom){
   std::cout<<"( "<<four_mom.pt()<<" [GeV], "<<four_mom.eta()<<", "<<four_mom.phi()<<", "<<four_mom.m()<<" [GeV])"<<std::endl;
 }
-
+static void getAngle(const double& eta, const double& phi, 
+		     const double& tmag, const double& ttheta,
+		     double& theta){
+  double etat=tmag*sin(ttheta);
+  double phit=tmag*cos(ttheta);
+  double mag=sqrt(pow(eta,2)+pow(phi,2));
+  double x = (phit*phi + etat*eta)/(tmag*mag);
+  theta=acos( x );
+  return;
+}
 namespace Rivet {
 
 
@@ -214,11 +223,11 @@ namespace Rivet {
       _histograms[key+"PMag"]		 = bookHisto1D(key+"PMag" ,50,0,0.06);
       _histograms[key+"PTheta"]		 = bookHisto1D(key+"PTheta" ,50,-PI,PI);
 
-      _histograms[key+"PMagJPsi"]	 = bookHisto1D(key+"PMagJPsi" ,50,0,0.06);
-      _histograms[key+"PThetaJPsi"]      = bookHisto1D(key+"PThetaJPsi" ,50,-PI,PI);
+      // _histograms[key+"PMagJPsi"]	 = bookHisto1D(key+"PMagJPsi" ,50,0,0.06);
+      _histograms[key+"PThetaJPsi"]      = bookHisto1D(key+"PThetaJPsi" ,50,0.,PI);
 
-      _histograms[key+"PMagPtn"]	 = bookHisto1D(key+"PMagPtn" ,50,0,0.06);
-      _histograms[key+"PThetaPtn"]       = bookHisto1D(key+"PThetaPtn" ,50,-PI,PI);
+      // _histograms[key+"PMagPtn"]	 = bookHisto1D(key+"PMagPtn" ,50,0,0.06);
+      _histograms[key+"PThetaPtn"]       = bookHisto1D(key+"PThetaPtn" ,50,0.,PI);
 
       _histograms[key+"PtclMult"]	 = bookHisto1D(key+"PtclMult",41,-0.5,40.5);
       // N sub-jettiness
@@ -226,8 +235,8 @@ namespace Rivet {
       _histograms[key+"NSJTau2"]	 = bookHisto1D(key+"NSJTau2", 40, -0.005, 1.005);
       _histograms[key+"NSJTau3"]	 = bookHisto1D(key+"NSJTau3", 40, -0.005, 1.005);
 
-      _histograms[key+"NSJTau21"]	 = bookHisto1D(key+"NSJTau21", 40, -0.005, 2.505);
-      _histograms[key+"NSJTau32"]	 = bookHisto1D(key+"NSJTau32", 40, -0.005, 2.505);
+      _histograms[key+"NSJTau21"]	 = bookHisto1D(key+"NSJTau21", 40, -0.005, 1.25);
+      _histograms[key+"NSJTau32"]	 = bookHisto1D(key+"NSJTau32", 40, -0.005, 1.25);
 
       char histName[25];
       for(int i=0; i < nPtBins; i++) {
@@ -256,14 +265,15 @@ namespace Rivet {
       fillJetZ(key.c_str(),8,z,jet_pt,weight);
       _histograms[key+"PtclMult"]->fill(jet.constituents().size(),weight);
       std::vector<double> pull=JetPull(jet);
-      _histograms[key+"PTheta"]->fill(pull.at(1),weight);
       _histograms[key+"PMag"]->fill(pull.at(0),weight);
-      pull=JetPull(jet, j_psi);
-      _histograms[key+"PThetaJPsi"]->fill(pull.at(1),weight);
-      _histograms[key+"PMagJPsi"]->fill(pull.at(0),weight);
-      pull=JetPull(jet, parton);
-      _histograms[key+"PThetaPtn"]->fill(pull.at(1),weight);
-      _histograms[key+"PMagPtn"]->fill(pull.at(0),weight);
+      _histograms[key+"PTheta"]->fill(pull.at(1),weight);
+      if(pull.at(0)!=0){
+	double theta=-99.;
+	getAngle(j_psi.eta(),j_psi.phi(),pull.at(0),pull.at(1),theta);
+	_histograms[key+"PThetaJPsi"]->fill(theta,weight);
+	getAngle(parton.eta(),parton.phi(),pull.at(0),pull.at(1),theta);
+	_histograms[key+"PThetaPtn"]->fill(theta,weight);
+      }
 
       _histograms[key+"Dipolarity"]->fill(Dipolarity(jet),weight);
       vector<double> tau_vals(3,-1.);

@@ -101,16 +101,16 @@ LogY=1
 XLabel=$\tau_{3}$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau12$
-Title= Ratio of $\tau_1/\tau_2$ of Anti-k$_{T}$ jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau21$
+Title= Ratio of $\tau_2/\tau_1$ of Anti-k$_{T}$ jet
 LogY=1
-XLabel=$\tau_1/\tau_2$
+XLabel=$\tau_2/\tau_1$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau23$
-Title= Ratio of $\tau_2/\tau_3$ of Anti-k$_{T}$ jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetNSJTau32$
+Title= Ratio of $\tau_3/\tau_2$ of Anti-k$_{T}$ jet
 LogY=1
-XLabel=$\tau_2/\tau_3$
+XLabel=$\tau_3/\tau_2$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetPtclMult$
@@ -223,16 +223,16 @@ LogY=1
 XLabel=$\tau_{3}$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau12$
-Title= Ratio of $\tau_1/\tau_2$ of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau21$
+Title= Ratio of $\tau_2/\tau_1$ of CA Cone Jet
 LogY=1
-XLabel=$\tau_1/\tau_2$
+XLabel=$\tau_2/\tau_1$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau23$
-Title= Ratio of $\tau_2/\tau_3$ of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau32$
+Title= Ratio of $\tau_3/\tau_2$ of CA Cone Jet
 LogY=1
-XLabel=$\tau_2/\tau_3$
+XLabel=$\tau_3/\tau_2$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtclMult$
