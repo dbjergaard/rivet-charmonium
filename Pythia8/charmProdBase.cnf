@@ -9,26 +9,19 @@ Stat:showPartonLevel = on ! additional statistics on MPI
 Beams:eCM = 8000.
 Random:setSeed = on
 
+! PartonLevel:MPI = off 
+! PartonLevel:ISR = off 
+! PartonLevel:FSR = off 
+HadronLevel:Hadronize = off 
 ! HardQCD:all = off
 ! SoftQCD:all = off
 ParticleDecays:mixB = off
-! HadronLevel:all = on
 PhaseSpace:pTHatMin = 45
 PhaseSpace:pTHatMinDiverge = 0.5
 
 443:onMode = off
-! 10443:onMode = off
-! 20443:onMode = off
 100443:onMode = off 
-! 30443:onMode = off
-! 9000443:onMode = off
-! 9010443:onMode = off
-! 9020443:onMode = off
 
 443:onIfAny = 13
-! 10443:onIfAny = 13
-! 20443:onIfAny = 13
 100443:onIfAny = 13 
-! 30443:onIfAny = 13
-
 

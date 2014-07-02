@@ -10,8 +10,15 @@ PARP(143) 0.01
 PARP(144) 0.01
 PARP(145) 0.05
 
+
+! MSTP(61) 0 ! ISR 0=off 1=on
+! MSTP(71) 0 ! FSR 0=off 1=on
+! MSTP(81) 0 ! Beam Fragmentation 0=off 1=on
+MSTP(111) 0 ! Hadronization 0=off 1=on
+
 MSTP(148)=1
 MSTP(149)=1
+
 
 CKIN(3) 45D0
 CKIN(7) -2.5
