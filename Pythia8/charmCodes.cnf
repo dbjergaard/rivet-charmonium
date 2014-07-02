@@ -17,8 +17,3 @@ Charmonium:qqbar2ccbar(3PJ)[3S1(8)]g = on,on,on
 Charmonium:gg2ccbar(3PJ)[3PJ(1)]g = on,on,on
 Charmonium:qg2ccbar(3PJ)[3PJ(1)]q = on,on,on
 Charmonium:qqbar2ccbar(3PJ)[3PJ(1)]g = on,on,on
-
-Charmonium:gg2ccbar(3DJ)[3PJ(8)]g = on
-Charmonium:qg2ccbar(3DJ)[3PJ(8)]q = on
-Charmonium:qqbar2ccbar(3DJ)[3PJ(8)]g = on
-Charmonium:gg2ccbar(3DJ)[3DJ(1)]g = on
