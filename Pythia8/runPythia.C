@@ -16,19 +16,24 @@ using namespace Pythia8;
 template < class T> bool contains(const std::vector<T>& container, const T& value){
   return std::find(container.begin(),container.end(),value)!=container.end();
 }
-//this will crash and burn...
+
 const Particle& find_ptcl(const int pid,const Event& evt){
   return evt[pid];
 }
 void print_family_tree(const Particle& ptcl, const Event& evt){
   vector<int> daughters = ptcl.daughterList();
-  cout <<"( "<<ptcl.id() << " ";
+  bool isCopy = (ptcl.daughter1() == ptcl.daughter2() && ptcl.daughter2() > 0);
+  if(!isCopy){
+    cout <<" ["<<ptcl.id();
+  }
   if(daughters.size() > 0){
     for(vector<int>::const_iterator d=daughters.begin(); d!=daughters.end(); ++d ){
       print_family_tree(find_ptcl(*d, evt),evt);
     }
   }
-  cout <<")"<<endl;
+  if(!isCopy){
+    cout <<"]";
+  }
   return;
 }
 
@@ -112,6 +117,9 @@ int main(int argc, char* argv[]) {
       continue;
     }
 
+    print_family_tree( pythia.event[1], pythia.event);
+    cout << endl;
+
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
     ToHepMC.fill_next_event( pythia, hepmcevt );
     ascii_io << hepmcevt ;
@@ -119,6 +127,6 @@ int main(int argc, char* argv[]) {
     nGenerated++;
   }
 
-  pythia.stat();
+  //pythia.stat();
   return 0;
 }

@@ -34,7 +34,10 @@ color_palettes={"blue":["#084594","#2171b5","#4292c6","#6baed6","#9ecae1","#c6db
 def getTitle(fileName):
     titles={'1S0_8.yoda':['1S$_0^{(8)}$','blue'], '3PJ_8.yoda':['3P$_J^{(8)}$','blue'],
             '3S1_8.yoda':['3S$_1^{(8)}$','blue'], '3PJ_1.yoda':['3P$_J^{(1)}$','red'],
-            '3S1_1.yoda':['3S$_1^{(1)}$','blue']}
+            '3S1_1.yoda':['3S$_1^{(1)}$','blue'],
+            'P6_1S0_8.yoda':['P6 1S$_0^{(8)}$','blue'], 'P6_3PJ_8.yoda':['P6 3P$_J^{(8)}$','blue'],
+            'P6_3S1_8.yoda':['P6 3S$_1^{(8)}$','blue'], 'P6_3PJ_1.yoda':['P6 3P$_J^{(1)}$','red'],
+            'P6_3S1_1.yoda':['P6 3S$_1^{(1)}$','blue']}
     title=[fileName.split('.')[0],'red']
     try:
         title=titles[fileName]
