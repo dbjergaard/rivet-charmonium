@@ -148,7 +148,10 @@ namespace Rivet {
       // _histograms["JetMassTrim"]->fill(Trimmer(cs,ConeJet, FastJets::CAM, 0.03, 0.3).m(), weight);
       // _histograms["JetMassPrune"]->fill(Pruner(cs,ConeJet, FastJets::CAM, 0.4, 0.1).m(), weight);
 
-
+      if(j_psi.pt() < 20*GeV){
+	vetoEvent;
+      }
+      cutFlow["JPsiPt"]++;
       //fill j_psi histos
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
       _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
@@ -177,7 +180,7 @@ namespace Rivet {
       	parton=jets.at(1);
       }
 
-      fillJetHistos("ConeJet",ConeJet,parton,j_psi,cs,weight); 
+      //fillJetHistos("ConeJet",ConeJet,parton,j_psi,cs,weight); 
       fillJetHistos("Jet",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
 
     }
