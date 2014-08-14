@@ -1,10 +1,10 @@
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/.*
 FullRange=1
-NormalizeToIntegral=1
+Scale=44.8
 LogY=0
 LegendYPos=0.95
 LegendXPos=0.60
-YLabel= arb. units. 
+YLabel= Events/Binwidth
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetMult$
@@ -72,7 +72,7 @@ XLabel=$z$
 # END PLOT
 
 # BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetDeltaR$
-Title= $\Delta$ R between Anti-k$_{T}$ Jet and Cone
+Title= $\Delta$ R between Anti-k$_{T}$ Jet and J/$\psi$
 LogY=1
 XLabel=$\Delta$ R
 # END PLOT
