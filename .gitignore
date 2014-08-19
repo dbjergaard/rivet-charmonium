@@ -19,3 +19,15 @@
 *.exe
 *.out
 *.app
+
+# Final Products
+*.png 
+*.pdf
+*.txt
+*.log
+*.dat
+*.yoda
+*.tex
+*.gnu
+*.hepmc
+*.fifo

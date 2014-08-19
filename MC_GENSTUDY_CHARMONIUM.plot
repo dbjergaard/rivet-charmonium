@@ -151,124 +151,246 @@ Title=  Anti-k$_{T}$ Jet Pull $\theta_{Ptn}$
 XLabel=$\theta_t$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPt$
-LogY=1
-Title=p_T of CA Cone Jet
-XLabel=$p_T$ [GeV]
-# END PLOT
-
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtZ3$
-Title=Transverse momentum of CA Cone Jet ($z=0.3$)
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPt$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(E > 175 GeV)$
 LogY=1
 XLabel=$p_T$ [GeV]
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtZ5$
-Title=Transverse momentum of CA Cone Jet ($z=0.5$)
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPtZ3$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(E > 175 GeV)$ ($z=0.3$)
 LogY=1
 XLabel=$p_T$ [GeV]
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtZ8$
-Title=Transverse momentum of CA Cone Jet ($z=0.8$)
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPtZ5$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(E > 175 GeV)$ ($z=0.5$)
 LogY=1
 XLabel=$p_T$ [GeV]
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetM$
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPtZ8$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(E > 175 GeV)$ ($z=0.8$)
 LogY=1
-Title=Mass of CA Cone Jet
+XLabel=$p_T$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiM$
+LogY=1
+Title=Mass of Anti-k$_{T}$ Jet $(E > 175 GeV)$
 XLabel=$M$ [GeV]
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetEta$
-Title=$\eta$ of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiEta$
+Title=$\eta$ distribution of Anti-k$_{T}$ Jet $(E > 175 GeV)$
 XLabel=$\eta$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetZ.*$
-Title= Cone Jet z, $p_{T}^{J/\psi}/(p_{T}^{Jet}+p_{T}^{J/\psi})$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiZ.*$
+Title= Anti-k$_{T}$ Jet $(E > 175 GeV)$ z, $p_{T}^{J/\psi}/(p_{T}^{Jet}+p_{T}^{J/\psi})$ 
 LegendYPos=0.95
 LegendXPos=0.30
 XLabel=$z$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetDeltaR$
-Title= $\Delta$ R between CA Cone Jet and J/$\psi$
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiDeltaR$
+Title= $\Delta$ R between Anti-k$_{T}$ Jet $(E > 175 GeV)$ and J/$\psi$
 LogY=1
 XLabel=$\Delta$ R
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetDipolarity$
-Title= Dipolarity of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiDipolarity$
+Title= Dipolarity of  Anti-k$_{T}$ jet
 LogY=1
 XLabel=$ed$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau1$
-Title= 1-subjettiness of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiNSJTau1$
+Title= 1-subjettiness of Anti-k$_{T}$ jet
 LogY=1
 XLabel=$\tau_{1}$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau2$
-Title= 2-subjettiness of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiNSJTau2$
+Title= 2-subjettiness of Anti-k$_{T}$ jet
 LogY=1
 XLabel=$\tau_{2}$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau3$
-Title= 3-subjettiness of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiNSJTau3$
+Title= 3-subjettiness of Anti-k$_{T}$ jet
 LogY=1
 XLabel=$\tau_{3}$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau21$
-Title= Ratio of $\tau_2/\tau_1$ of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiNSJTau21$
+Title= Ratio of $\tau_2/\tau_1$ of Anti-k$_{T}$ jet
 LogY=1
 XLabel=$\tau_2/\tau_1$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetNSJTau32$
-Title= Ratio of $\tau_3/\tau_2$ of CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiNSJTau32$
+Title= Ratio of $\tau_3/\tau_2$ of Anti-k$_{T}$ jet
 LogY=1
 XLabel=$\tau_3/\tau_2$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPtclMult$
-Title=Number of Particles in CA Cone Jet
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPtclMult$
+Title=Number of Particles in Anti-k$_{T}$ jet
 XLabel=N
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPTheta$
-Title=  CA Cone Jet Pull $\theta_t$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPTheta$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull $\theta_t$ 
 XLabel=$\theta_t$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMag$
-Title=  CA Cone Jet Pull Magnitude $|\vec{t}|$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPMag$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull Magnitude $|\vec{t}|$ 
 LogY=1
 XLabel=$|\vec{t}|$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMagPtn$
-Title=  CA Cone Jet Pull Magnitude $|\vec{t}_{Ptn}|$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPMagPtn$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull Magnitude $|\vec{t}_{Ptn}|$ 
 LogY=1
 XLabel=$|\vec{t}_{Ptn}|$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPMagJPsi$
-Title=  CA Cone Jet Pull Magnitude $|\vec{t}_{J/\psi}|$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPMagJPsi$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull Magnitude $|\vec{t}_{J/\psi}|$ 
 LogY=1
 XLabel=$|\vec{t}_{J/\psi}|$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPThetaJPsi$
-Title=  CA Cone Jet Pull $\theta_{J/\psi}$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPThetaJPsi$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull $\theta_{J/\psi}$ 
 XLabel=$\theta_t$
 # END PLOT
 
-# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/ConeJetPThetaPtn$
-Title=  CA Cone Jet Pull $\theta_{Ptn}$ 
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetEHiPThetaPtn$
+Title=  Anti-k$_{T}$ Jet $(E > 175 GeV)$ Pull $\theta_{Ptn}$ 
+XLabel=$\theta_t$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPt$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$
+LogY=1
+XLabel=$p_T$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPtZ3$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ ($z=0.3$)
+LogY=1
+XLabel=$p_T$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPtZ5$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ ($z=0.5$)
+LogY=1
+XLabel=$p_T$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPtZ8$
+Title=Transverse momentum of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ ($z=0.8$)
+LogY=1
+XLabel=$p_T$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoM$
+LogY=1
+Title=Mass of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$
+XLabel=$M$ [GeV]
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoEta$
+Title=$\eta$ distribution of Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$
+XLabel=$\eta$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoZ.*$
+Title= Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ z, $p_{T}^{J/\psi}/(p_{T}^{Jet}+p_{T}^{J/\psi})$ 
+LegendYPos=0.95
+LegendXPos=0.30
+XLabel=$z$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoDeltaR$
+Title= $\Delta$ R between Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ and J/$\psi$
+LogY=1
+XLabel=$\Delta$ R
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoDipolarity$
+Title= Dipolarity of  Anti-k$_{T}$ jet
+LogY=1
+XLabel=$ed$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoNSJTau1$
+Title= 1-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{1}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoNSJTau2$
+Title= 2-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{2}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoNSJTau3$
+Title= 3-subjettiness of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_{3}$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoNSJTau21$
+Title= Ratio of $\tau_2/\tau_1$ of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_2/\tau_1$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoNSJTau32$
+Title= Ratio of $\tau_3/\tau_2$ of Anti-k$_{T}$ jet
+LogY=1
+XLabel=$\tau_3/\tau_2$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPtclMult$
+Title=Number of Particles in Anti-k$_{T}$ jet
+XLabel=N
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPTheta$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull $\theta_t$ 
+XLabel=$\theta_t$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPMag$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull Magnitude $|\vec{t}|$ 
+LogY=1
+XLabel=$|\vec{t}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPMagPtn$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull Magnitude $|\vec{t}_{Ptn}|$ 
+LogY=1
+XLabel=$|\vec{t}_{Ptn}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPMagJPsi$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull Magnitude $|\vec{t}_{J/\psi}|$ 
+LogY=1
+XLabel=$|\vec{t}_{J/\psi}|$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPThetaJPsi$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull $\theta_{J/\psi}$ 
+XLabel=$\theta_t$
+# END PLOT
+
+# BEGIN PLOT /MC_GENSTUDY_CHARMONIUM/JetELoPThetaPtn$
+Title=  Anti-k$_{T}$ Jet $(45 < E < 65 GeV)$ Pull $\theta_{Ptn}$ 
 XLabel=$\theta_t$
 # END PLOT
