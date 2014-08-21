@@ -128,9 +128,9 @@ namespace Rivet {
       // }
       // cutFlow["JPsiPt"]++;
       //fill j_psi histos
-      _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
-      _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
-      _histograms["JPsiM"]->fill(j_psi.mass(),weight);
+      // _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
+      // _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
+      // _histograms["JPsiM"]->fill(j_psi.mass(),weight);
       fastjet::PseudoJet charmJet;
       double delR(99.);
       double candDelR(99.);
@@ -152,13 +152,13 @@ namespace Rivet {
       if(parton.m2()==charmJet.m2()){
       	parton=jets.at(1);
       }
-      fillJetHistos("Jet",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
-      if(charmJet.pt() > 45*GeV && charmJet.pt() < 65*GeV){
-	fillJetHistos("JetELo",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
-      }
-      else if(charmJet.pt() > 175*GeV){
-	fillJetHistos("JetEHi",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
-      }
+      // fillJetHistos("Jet",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
+      // if(charmJet.pt() > 45*GeV && charmJet.pt() < 65*GeV){
+      // 	fillJetHistos("JetELo",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
+      // }
+      // else if(charmJet.pt() > 175*GeV){
+      // 	fillJetHistos("JetEHi",charmJet,parton,j_psi,*jetProj.clusterSeq(),weight); 
+      // }
     }
 
     /// Finalize
