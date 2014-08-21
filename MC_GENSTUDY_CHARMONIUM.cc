@@ -111,10 +111,11 @@ namespace Rivet {
       }
       cutFlow["2Muons"]++;
       FourMomentum j_psi;
-      find_j_psi(muons,j_psi);
-      if(j_psi.mass()==0 ) { 
-      	vetoEvent;
-      }
+      // find_j_psi(muons,j_psi);
+      // if(j_psi.mass()==0 ) { 
+      // 	vetoEvent;
+      // }
+      // cutFlow["JPsiCand"]++;
       const FastJets& jetProj = applyProjection<FastJets>(event, "Jets");
       const PseudoJets jets = jetProj.pseudoJetsByPt(45*GeV);
       if(jets.size() < 2){
@@ -122,10 +123,10 @@ namespace Rivet {
       }
       cutFlow["Geq1Jet"]++;
       _histograms["JetMult"]->fill(jets.size(),weight);
-      if(j_psi.pt() < 20*GeV){
-	vetoEvent;
-      }
-      cutFlow["JPsiPt"]++;
+      // if(j_psi.pt() < 20*GeV){
+      // 	vetoEvent;
+      // }
+      // cutFlow["JPsiPt"]++;
       //fill j_psi histos
       _histograms["JPsiEta"]->fill(j_psi.eta(),weight);
       _histograms["JPsiPt"]->fill(j_psi.pt(),weight);
