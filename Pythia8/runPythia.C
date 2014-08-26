@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
       continue;
     }
 
-    print_family_tree( pythia.event[1], pythia.event);
+    // print_family_tree( pythia.event[1], pythia.event);
     cout << endl;
 
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);

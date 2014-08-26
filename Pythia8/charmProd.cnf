@@ -12,7 +12,7 @@ Random:setSeed = on
 ! PartonLevel:MPI = off 
 ! PartonLevel:ISR = off 
 ! PartonLevel:FSR = off 
-HadronLevel:Hadronize = off 
+! HadronLevel:Hadronize = off 
 ! HardQCD:all = off
 ! SoftQCD:all = off
 ParticleDecays:mixB = off
@@ -33,7 +33,7 @@ Charmonium:gg2ccbar(3PJ)[3PJ(1)]g = on,on,on
 Charmonium:qg2ccbar(3PJ)[3PJ(1)]q = on,on,on
 Charmonium:qqbar2ccbar(3PJ)[3PJ(1)]g = on,on,on
 
-Charmonium:gg2ccbar(3DJ)[3DJ(1)]g = on
+! Charmonium:gg2ccbar(3DJ)[3DJ(1)]g = on
 
 !! Color octet processes
 ! Charmonium:gg2ccbar(3S1)[3S1(8)]g = on,on
