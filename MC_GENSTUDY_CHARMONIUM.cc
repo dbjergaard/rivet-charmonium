@@ -16,6 +16,9 @@
 //Projections
 #include "Rivet/Projections/FinalState.hh"
 #include "Rivet/Projections/ChargedLeptons.hh"
+#include "Rivet/Projections/MergedFinalState.hh"
+#include "Rivet/Projections/VetoedFinalState.hh"
+#include "Rivet/Projections/IdentifiedFinalState.hh"
 #include "Rivet/Projections/FastJets.hh"
 
 // fastjet contrib
@@ -68,15 +71,23 @@ namespace Rivet {
     void init() {
 
       // Projections
-      const FinalState fs(-4.2, 4.2, 500*MeV);
+      const FinalState fs(-2.5, 2.5, 500*MeV);
       addProjection(fs, "FS");
       const ChargedFinalState cfs(-2.5, 2.5, 500*MeV);
       addProjection(cfs, "CFS");
+      IdentifiedFinalState muonfs(fs);
+      muonfs.acceptIdPair(13);
+      IdentifiedFinalState nufs(fs);
+      nufs.acceptNeutrinos();
+      MergedFinalState muAndNu(muonfs,nufs);
+      addProjection(muAndNu,"MuonsAndNeutrinos");
       
-
+      VetoedFinalState caloParts(FinalState(-4.2,4.2));
+      caloParts.addVetoOnThisFinalState(muAndNu);
+      
       ChargedLeptons lfs(fs);
       addProjection(lfs, "LFS");
-      FastJets JetProjection(cfs,FastJets::ANTIKT, jetR);
+      FastJets JetProjection(caloParts,FastJets::ANTIKT, jetR);
       addProjection(JetProjection,"Jets");
 
       // Histograms
