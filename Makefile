@@ -1,12 +1,12 @@
-CC=g++
+CC=$(shell rivet-config --cxx)
 
 LIBDIR:=$(shell rivet-config --libdir)
 
 INCDIR=$(PWD)/include
 RIVETINCDIR:=$(shell rivet-config --cppflags)
-LDFLAGS:=$(shell rivet-config --ldflags)
+LDFLAGS:=$(shell rivet-config --ldflags) -lRivet
 WFLAGS= -Wall -Wno-long-long -Wno-format #-Werror=uninitialized -Werror=delete-non-virtual-dtor  -Wno-unused-local-typedefs
-CFLAGS= -g3 -fno-inline -I$(INCDIR) $(RIVETINCDIR) -pedantic -ansi $(WFLAGS) -O0 -Wl,--no-as-needed -lRivet
+CFLAGS= -g3 -fno-inline -I$(INCDIR) $(RIVETINCDIR) -pedantic $(WFLAGS) -O0 -Wl,--no-as-needed 
 JETTYPES=Jet ConeJet
 
 SAMPLES=1S0_8 3PJ_8 3S1_8 3PJ_1 3S1_1
@@ -23,7 +23,7 @@ P6PLOTFILES:=$(addsuffix Plot.pdf,$(foreach jet,$(JETTYPES),$(addprefix $(jet)Zv
 all: rivet-lib 
 rivet-lib: RivetMC_GENSTUDY_CHARMONIUM.so libBOOSTFastJets.so
 RivetMC_GENSTUDY_CHARMONIUM.so:  MC_GENSTUDY_CHARMONIUM.cc libBOOSTFastJets.so
-	$(CC) -o "$@" -shared -fPIC $(CFLAGS) $< -lBOOSTFastJets $(LDFLAGS) -lfastjetcontribfragile
+	$(CC) -o "$@" -shared -fPIC $(CFLAGS) $< -lBOOSTFastJets $(LDFLAGS) -lfastjetcontribfragile -L./
 libBOOSTFastJets.so: src/BOOSTFastJets.cxx
 	$(CC)  -shared -fPIC $(CFLAGS) $< -o $@ -lfastjet -lfastjettools $(LDFLAGS)
 # Plotting rules for making all pdf plots

@@ -87,7 +87,7 @@ namespace Rivet {
       
       ChargedLeptons lfs(fs);
       addProjection(lfs, "LFS");
-      FastJets JetProjection(caloParts,FastJets::ANTIKT, jetR);
+      FastJets JetProjection(cfs,FastJets::ANTIKT, jetR);
       addProjection(JetProjection,"Jets");
 
       // Histograms

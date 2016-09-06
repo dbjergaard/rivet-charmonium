@@ -24,7 +24,7 @@ void print_family_tree(const Particle& ptcl, const Event& evt){
   vector<int> daughters = ptcl.daughterList();
   bool isCopy = (ptcl.daughter1() == ptcl.daughter2() && ptcl.daughter2() > 0);
   if(!isCopy){
-    cout <<" ["<<ptcl.id();
+    cout <<" ("<<ptcl.id();
   }
   if(daughters.size() > 0){
     for(vector<int>::const_iterator d=daughters.begin(); d!=daughters.end(); ++d ){
@@ -32,7 +32,7 @@ void print_family_tree(const Particle& ptcl, const Event& evt){
     }
   }
   if(!isCopy){
-    cout <<"]";
+    cout <<")";
   }
   return;
 }
@@ -116,9 +116,14 @@ int main(int argc, char* argv[]) {
 	 contains(requestedPdgId, -13))){
       continue;
     }
-
+    for(int i=0; i < pythia.event.size(); i++){
+      if(abs(pythia.event[i].id())==9940003){
+	print_family_tree(pythia.event[i],pythia.event);
+	cout << endl  << endl;
+	break;
+      }
+    }
     // print_family_tree( pythia.event[1], pythia.event);
-    cout << endl;
 
     HepMC::GenEvent* hepmcevt = new HepMC::GenEvent(HepMC::Units::GEV, HepMC::Units::MM);
     ToHepMC.fill_next_event( pythia, hepmcevt );
